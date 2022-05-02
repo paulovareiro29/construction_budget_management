@@ -22,10 +22,12 @@ int push(NODE **start, void *data, size_t size){
     if(new == NULL) return -1;
 
     new->data = malloc(size);
-    new->next = NULL;
 
     // Out of memory
     if(new->data == NULL) return -1;
+
+    new->data = data;
+    new->next = NULL;
 
     /*
      *  If start is NULL, it means that
@@ -71,6 +73,47 @@ int pop(NODE **start){
     }
 
     // Free memory space
+    free(aux);
+    return 0;
+}
+
+/*
+ * TODO: validate if it works
+ * Adds an element to the start of the linked list
+*/
+int unshift(NODE **start, void *data, size_t size){
+    NODE *new = NULL;
+    new = (NODE *) malloc(sizeof (NODE));
+
+    // Out of memory
+    if(new == NULL) return -1;
+
+    new->data = malloc(size);
+
+    // Out of memory
+    if(new->data == NULL) return -1;
+
+    new->data = data;
+    new->next = NULL;
+
+    if(*start != NULL){
+        new->next = *start;
+    }
+
+    *start = new;
+}
+
+/*
+ * TODO: validate if it works
+ * Removes the first element of the linked list
+*/
+int shift(NODE **start){
+    NODE *aux = *start;
+
+    // Empty Linked List
+    if(aux == NULL) return -1;
+
+    *start = aux->next;
     free(aux);
     return 0;
 }
