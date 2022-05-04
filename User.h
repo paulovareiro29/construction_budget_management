@@ -6,8 +6,8 @@
 #include "LinkedList.h"
 
 typedef enum role{
-    decisor = 0 ,
-    administrador = 1
+    decision_maker = 0 ,
+    admin = 1
 } ROLE;
 
 typedef struct user{
@@ -23,8 +23,8 @@ typedef struct user{
  * Adds a new user
  *  - return  0: Success
  *  - return -3: Out of memory
- * */
-int user_add(NODE **start, USER *user) {
+*/
+int add_user(NODE **start, USER *user) {
     return push(start, user, sizeof(USER));
 }
 
@@ -34,7 +34,7 @@ int user_add(NODE **start, USER *user) {
  *  - return -1: User not found
  *  - return -2: List is empty
 */
-int user_remove_by_username(NODE **start, char username[100]){
+int remove_user_by_username(NODE **start, char username[100]){
     NODE *aux = NULL;
     USER *data = NULL;
     int index = 0;

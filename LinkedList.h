@@ -133,10 +133,12 @@ int splice(NODE **start, int index){
     NODE *aux = NULL, *prev = NULL;
     int size = 0;
 
+
     // Empty linked list
     if(*start == NULL) return -2;
 
-    aux = start;
+    aux = *start;
+
     while(aux != NULL && size != index){
         prev = aux;
         aux = aux->next;
