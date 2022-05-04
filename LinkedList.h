@@ -11,7 +11,6 @@ typedef struct node {
 }NODE;
 
 /*
- * TODO: validate if it works
  * Adds an element to the end of the linked list
  *  - return  0: Success
  *  - return -3: Out of memory
@@ -49,7 +48,6 @@ int push(NODE **start, void *data, size_t size){
 }
 
 /*
- * TODO: validate if it works
  * Removes the last element of the linked list
  *  - return  0: Success
  *  - return -2: Empty list
@@ -82,7 +80,6 @@ int pop(NODE **start){
 }
 
 /*
- * TODO: validate if it works
  * Adds an element to the start of the linked list
  *  - return  0: Success
  *  - return -3: Out of memory
@@ -111,7 +108,6 @@ int unshift(NODE **start, void *data, size_t size){
 }
 
 /*
- * TODO: validate if it works
  * Removes the first element of the linked list
  *  - return  0: Success
  *  - return -2: List is empty
@@ -128,7 +124,6 @@ int shift(NODE **start){
 }
 
 /*
- * TODO: validate if it works
  * Removes an element given an index
  *  - return  0: Success
  *  - return -1: Element not found
@@ -173,7 +168,6 @@ int splice(NODE **start, int index){
 }
 
 /*
- * TODO: validate if it works
  * Returns the size of the linked list
 */
 int length(NODE *start){
@@ -190,7 +184,6 @@ int length(NODE *start){
 }
 
 /*
- * TODO: validate if it works
  * Deletes all elements of the linked list
 */
 void clear(NODE **start){

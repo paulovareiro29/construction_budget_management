@@ -20,23 +20,21 @@ typedef struct user{
 /* start::{CRUD} */
 
 /*
- * TODO: validate if it works
  * Adds a new user
  *  - return  0: Success
  *  - return -3: Out of memory
  * */
-int user_add(NODE **start, USER user) {
-    return push(start, &user, sizeof(USER));
+int user_add(NODE **start, USER *user) {
+    return push(start, user, sizeof(USER));
 }
 
 /*
- * TODO: validate if it works
- * Removes an user given an username
+ * Removes a user given a username
  *  - return  0: Success
  *  - return -1: User not found
  *  - return -2: List is empty
 */
-int user_remove_by_username(NODE **start, char username){
+int user_remove_by_username(NODE **start, char username[100]){
     NODE *aux = NULL;
     USER *data = NULL;
     int index = 0;
@@ -48,7 +46,7 @@ int user_remove_by_username(NODE **start, char username){
     while(aux != NULL){
         data = (USER *) aux->data;
         if(strcmp(data->username, username) == 0){
-            return splice(&start, index);
+            return splice(start, index);
         }
 
         aux = aux->next;
@@ -61,20 +59,19 @@ int user_remove_by_username(NODE **start, char username){
 /* end::{CRUD}*/
 
 /*
- * TODO: validate if it works
- * Finds a user given an username
+ * Finds a user given a username
  *  - Returns the user
  *  - Returns NULL if not found
 */
-USER* find_user_by_username(NODE **start, char username){
+USER* find_user_by_username(NODE *start, char username[100]){
     NODE *aux = NULL;
     USER *data = NULL;
     int index = 0;
 
     // Empty list
-    if(*start == NULL) return NULL;
+    if(start == NULL) return NULL;
 
-    aux = *start;
+    aux = start;
     while(aux != NULL){
         data = (USER *) aux->data;
         if(strcmp(data->username, username) == 0){
@@ -89,12 +86,12 @@ USER* find_user_by_username(NODE **start, char username){
 }
 
 /*
- * TODO: validate if it works
  * Logins the user given username and password
+ *  - return  0: Success
  *  - return -1: User not found
  *  - return -2: Wrong password
 */
-int login_user(NODE **start, char username, char password){
+int login_user(NODE *start, char username[100], char password[100]){
     USER *result = find_user_by_username(start, username);
 
     if(result == NULL) return -1;
@@ -104,4 +101,28 @@ int login_user(NODE **start, char username, char password){
     return 0;
 }
 
+/*
+ * Prints information of all users
+*/
+void print_users(NODE *start){
+    NODE *aux = NULL;
+    USER *data = NULL;
+
+
+    if(start == NULL){
+        printf("Empty list\n");
+        return;
+    }
+
+    aux = start;
+    while(aux != NULL){
+        data = (USER*) aux->data;
+
+        printf("Username: %s\n", data->username);
+        printf("Name: %s\n", data->name);
+        printf("Role: %i\n", data->role);
+
+        aux = aux->next;
+    }
+}
 #endif //PROJB_24473_USER_H
