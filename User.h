@@ -91,7 +91,7 @@ USER* find_user_by_username(NODE *start, char username[100]){
  *  - return -1: User not found
  *  - return -2: Wrong password
 */
-int login_user(NODE *start, char username[100], char password[100]){
+int login(NODE *start, char username[100], char password[100]){
     USER *result = find_user_by_username(start, username);
 
     if(result == NULL) return -1;

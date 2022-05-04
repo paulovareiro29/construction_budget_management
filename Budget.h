@@ -102,4 +102,69 @@ int remove_budget_by_id(NODE **start, int id){
 }
 
 
+/*
+ * Adds a new detail
+ *  - return  0: Success
+ *  - return -3: Out of memory
+*/
+int add_detail(NODE **start, DETAIL *detail){
+    return push(start,detail, sizeof (DETAIL));
+}
+
+/*
+ * Finds a detail given the position
+ *  - returns the detail
+ *  - returns NULL if not found
+*/
+DETAIL* find_detail_by_position(NODE *start, int position){
+    NODE *aux = NULL;
+    DETAIL *data = NULL;
+    int index = 0;
+
+    // Empty list
+    if(start == NULL) return NULL;
+
+    if(length(start) - 1 < position) return NULL;
+
+    aux = start;
+    while(aux != NULL){
+        data = (DETAIL *) aux->data;
+        if(index == position){
+            return data;
+        }
+
+        aux = aux->next;
+        index++;
+    }
+
+    return NULL;
+}
+
+/*
+ * Removes a detail given the position
+ *  - return  0: Success
+ *  - return -1: Detail not found
+ *  - return -2: List is empty
+*/
+int remove_detail_by_position(NODE **start, int position){
+    NODE *aux = NULL;
+    BUDGET *data = NULL;
+    int index = 0;
+
+    // Empty list
+    if(*start == NULL) return -2;
+
+    if(length(start) - 1 < position) return -1;
+
+    aux = *start;
+    while(aux != NULL){
+        if(index == position) return splice(start, index);
+
+        aux = aux->next;
+        index++;
+    }
+
+    return -1;
+}
+
 #endif //PROJB_24473_BUDGET_H
