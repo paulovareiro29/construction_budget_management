@@ -120,6 +120,47 @@ int shift(NODE **start){
 
 /*
  * TODO: validate if it works
+ * Removes an element given an index
+*/
+int splice(NODE **start, int index){
+    NODE *aux = NULL, *prev = NULL;
+    int size = 0;
+
+    // Empty linked list
+    if(*start == NULL) return -1;
+
+    aux = start;
+    while(aux != NULL && size != index){
+        prev = aux;
+        aux = aux->next;
+        size++;
+    }
+
+    // If size != index then the index doesn't exist
+    if(size != index) return -1;
+
+    /* If the previous element is null it means that the element found
+     * is the first of the list, so the start must point to the next
+     * */
+    if(prev == NULL){
+        *start = aux->next;
+    }else{
+        prev->next = aux->next;
+    }
+
+    /* If the next of the element found is null
+     * it means that it is the last element of the list,
+     * so the previous elements points to NULL.
+     *
+     * Else it is in the middle, so the previous
+     * element must point to the next of the element found.
+     * */
+
+    free(aux);
+}
+
+/*
+ * TODO: validate if it works
  * Returns the size of the linked list
 */
 int length(NODE *start){
