@@ -13,18 +13,20 @@ typedef struct node {
 /*
  * TODO: validate if it works
  * Adds an element to the end of the linked list
+ *  - return  0: Success
+ *  - return -3: Out of memory
 */
 int push(NODE **start, void *data, size_t size){
     NODE *new = NULL, *aux = NULL;
     new = (NODE *) malloc(sizeof(NODE));
 
     // Out of memory
-    if(new == NULL) return -1;
+    if(new == NULL) return -3;
 
     new->data = malloc(size);
 
     // Out of memory
-    if(new->data == NULL) return -1;
+    if(new->data == NULL) return -3;
 
     new->data = data;
     new->next = NULL;
@@ -49,13 +51,15 @@ int push(NODE **start, void *data, size_t size){
 /*
  * TODO: validate if it works
  * Removes the last element of the linked list
+ *  - return  0: Success
+ *  - return -2: Empty list
 */
 int pop(NODE **start){
     NODE *aux = NULL, *prev = NULL;
 
     // Empty Linked List
     if(*start == NULL){
-        return -1;
+        return -2;
     }
 
     aux = *start;
@@ -80,18 +84,20 @@ int pop(NODE **start){
 /*
  * TODO: validate if it works
  * Adds an element to the start of the linked list
+ *  - return  0: Success
+ *  - return -3: Out of memory
 */
 int unshift(NODE **start, void *data, size_t size){
     NODE *new = NULL;
     new = (NODE *) malloc(sizeof (NODE));
 
     // Out of memory
-    if(new == NULL) return -1;
+    if(new == NULL) return -3;
 
     new->data = malloc(size);
 
     // Out of memory
-    if(new->data == NULL) return -1;
+    if(new->data == NULL) return -3;
 
     new->data = data;
     new->next = NULL;
@@ -101,17 +107,20 @@ int unshift(NODE **start, void *data, size_t size){
     }
 
     *start = new;
+    return 0;
 }
 
 /*
  * TODO: validate if it works
  * Removes the first element of the linked list
+ *  - return  0: Success
+ *  - return -2: List is empty
 */
 int shift(NODE **start){
     NODE *aux = *start;
 
     // Empty Linked List
-    if(aux == NULL) return -1;
+    if(aux == NULL) return -2;
 
     *start = aux->next;
     free(aux);
@@ -121,13 +130,16 @@ int shift(NODE **start){
 /*
  * TODO: validate if it works
  * Removes an element given an index
+ *  - return  0: Success
+ *  - return -1: Element not found
+ *  - return -2: List is empty
 */
 int splice(NODE **start, int index){
     NODE *aux = NULL, *prev = NULL;
     int size = 0;
 
     // Empty linked list
-    if(*start == NULL) return -1;
+    if(*start == NULL) return -2;
 
     aux = start;
     while(aux != NULL && size != index){
@@ -157,6 +169,7 @@ int splice(NODE **start, int index){
      * */
 
     free(aux);
+    return 0;
 }
 
 /*
