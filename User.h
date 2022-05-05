@@ -5,6 +5,8 @@
 #include <string.h>
 #include "LinkedList.h"
 
+#define filename "users.dat"
+
 typedef enum role{
     decision_maker = 0 ,
     admin = 1
@@ -125,4 +127,64 @@ void print_users(NODE *start){
         aux = aux->next;
     }
 }
+
+/*
+ * Saves all users to a file
+ *  - return  0: Success
+ *  - return -1: Error saving
+*/
+int save_users(NODE *start){
+    NODE *aux = NULL;
+    int res;
+
+    // Empty the file
+    remove(filename);
+
+    aux = start;
+    while(aux != NULL){
+        // Appends data to file
+        res = appendToFile(filename, aux->data, sizeof (USER));
+
+        // If failed, then delete file.
+        if(res != 0) {
+            remove(filename);
+            return -1;
+        }
+
+        aux = aux->next;
+    }
+
+    return 0;
+}
+
+/*
+ * Loads users from file
+ *  - return  0: Success
+ *  - return -3: Error opening file
+*/
+int load_users(NODE **start){
+    int res;
+
+    FILE *fp = fopen(filename,"rb");
+
+    if(fp == NULL) return -3;
+
+    do {
+        // Allocates memory for the data
+        USER *data = (USER*) malloc(sizeof (USER));
+
+        // Reads user data
+        res = fread(data, sizeof (USER),1, fp);
+
+        // Didn't read anything, then break the loop
+        if(res == 0) break;
+
+        add_user(start, data);
+    }while(res != 0);
+
+    fclose(fp);
+
+    return 0;
+}
+
 #endif //PROJB_24473_USER_H

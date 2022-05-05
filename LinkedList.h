@@ -200,4 +200,33 @@ void clear(NODE **start){
     }
 }
 
+/*
+ * Checks if the linked list is empty
+ *  - return 1: is empty
+ *  - return 0: not empty
+*/
+int isEmpty(NODE **start){
+    return *start == NULL;
+}
+
+/*
+ * Appends data to file given the filename
+ *  - return  0: Success
+ *  - return -1: Error saving data
+ *  - return -3: Error opening file
+*/
+int appendToFile(char filename[100], void* data, size_t size){
+    int res;
+
+    FILE *fp = fopen(filename, "ab");
+
+    if(fp == NULL) return -3;
+
+    res = fwrite(data, size, 1,fp);
+    fclose(fp);
+    if(res != 1) return -1;
+
+    return 0;
+}
+
 #endif //PROJB_24473_LINKEDLIST_H
