@@ -3,9 +3,9 @@
 
 #include <stdio.h>
 #include <string.h>
+#include "constants.h"
 #include "LinkedList.h"
 
-#define filename "users.dat"
 
 typedef enum role{
     decision_maker = 0 ,
@@ -138,16 +138,16 @@ int save_users(NODE *start){
     int res;
 
     // Empty the file
-    remove(filename);
+    remove(users_filename);
 
     aux = start;
     while(aux != NULL){
         // Appends data to file
-        res = appendToFile(filename, aux->data, sizeof (USER));
+        res = appendToFile(users_filename, aux->data, sizeof (USER));
 
         // If failed, then delete file.
         if(res != 0) {
-            remove(filename);
+            remove(users_filename);
             return -1;
         }
 
@@ -165,7 +165,7 @@ int save_users(NODE *start){
 int load_users(NODE **start){
     int res;
 
-    FILE *fp = fopen(filename,"rb");
+    FILE *fp = fopen(users_filename,"rb");
 
     if(fp == NULL) return -3;
 

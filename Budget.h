@@ -3,6 +3,7 @@
 
 #include <stdio.h>
 #include <string.h>
+#include "constants.h"
 #include "LinkedList.h"
 
 typedef enum state{
@@ -12,6 +13,7 @@ typedef enum state{
 } STATE;
 
 typedef enum result{
+    awaiting = -1,
     denied = 0,
     approved = 1
 } RESULT;
@@ -28,12 +30,13 @@ typedef struct budget {
     char description[100];
     float total;
     NODE *details;
+    int detailsSize;
     STATE state;
     /* when finished */
-    RESULT *result;
-    time_t *date;
-    char *justification[100];
-    char *user;
+    RESULT result;
+    time_t date;
+    char justification[100];
+    char user;
 } BUDGET;
 
 /*
@@ -167,4 +170,98 @@ int remove_detail_by_position(NODE **start, int position){
     return -1;
 }
 
+/*
+ * Saves all budgets to a file
+ *  - return  0: Success
+ *  - return -1: Error saving
+*/
+int save_budgets(NODE *start){
+    BUDGET *b = NULL;
+    NODE *aux, *baux = NULL;
+    int res, i;
+
+    // Empty the file
+    remove(budgets_filename);
+
+    aux = start;
+    while(aux != NULL){
+        b = (BUDGET *) aux->data;
+
+        b->detailsSize = length(b->details);
+
+        // Appends data to file
+        res = appendToFile(budgets_filename, aux->data, sizeof (BUDGET));
+
+        // If failed, then delete file.
+        if(res != 0) {
+            remove(budgets_filename);
+            return -1;
+        }
+
+        baux = b->details;
+        while(baux != NULL){
+            res = appendToFile(budgets_filename, baux->data, sizeof (DETAIL));
+
+            // If failed, then delete file.
+            if(res != 0) {
+                remove(budgets_filename);
+                return -1;
+            }
+
+            baux = baux->next;
+        }
+
+        aux = aux->next;
+    }
+
+    return 0;
+}
+
+/*
+ * Load budgets from file
+ *  - return  0: Success
+ *  - return -3: Error opening file
+*/
+int load_budgets(NODE **start){
+    int res, i;
+
+    FILE *fp = fopen(budgets_filename,"rb");
+
+
+    if(fp == NULL) return -3;
+
+    do {
+        // Allocates memory for the data
+        BUDGET *budget_data = (BUDGET *) malloc(sizeof (BUDGET));
+
+        // Reads budget data
+        res = fread(budget_data, sizeof (BUDGET),1, fp);
+
+        // Didn't read anything, then break the loop
+        if(res == 0) break;
+
+        // Reset pointer
+        budget_data->details = NULL;
+
+        add_budget(start, budget_data);
+
+        for(i = 0; i < budget_data->detailsSize; i++){
+
+            // Allocates memory for the data
+            DETAIL *detail_data = (DETAIL *) malloc(sizeof (DETAIL));
+
+            // Reads details data
+            res = fread(detail_data, sizeof (DETAIL),1, fp);
+
+            // Didn't read anything, then break the loop
+            if(res == 0) break;
+
+            add_detail(&budget_data->details, detail_data);
+        }
+    }while(res != 0);
+
+    fclose(fp);
+
+    return 0;
+}
 #endif //PROJB_24473_BUDGET_H
