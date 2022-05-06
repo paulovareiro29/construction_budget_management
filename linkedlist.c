@@ -1,20 +1,5 @@
-#ifndef PROJB_24473_LINKEDLIST_H
-#define PROJB_24473_LINKEDLIST_H
+#include "linkedlist.h"
 
-#include <stdio.h>
-#include <stdlib.h>
-
-// Generic linked list
-typedef struct node {
-    void *data;
-    struct node *next;
-}NODE;
-
-/*
- * Adds an element to the end of the linked list
- *  - return  0: Success
- *  - return -3: Out of memory
-*/
 int push(NODE **start, void *data, size_t size){
     NODE *new = NULL, *aux = NULL;
     new = (NODE *) malloc(sizeof(NODE));
@@ -47,11 +32,6 @@ int push(NODE **start, void *data, size_t size){
     return 0;
 }
 
-/*
- * Removes the last element of the linked list
- *  - return  0: Success
- *  - return -2: Empty list
-*/
 int pop(NODE **start){
     NODE *aux = NULL, *prev = NULL;
 
@@ -79,11 +59,6 @@ int pop(NODE **start){
     return 0;
 }
 
-/*
- * Adds an element to the start of the linked list
- *  - return  0: Success
- *  - return -3: Out of memory
-*/
 int unshift(NODE **start, void *data, size_t size){
     NODE *new = NULL;
     new = (NODE *) malloc(sizeof (NODE));
@@ -107,11 +82,6 @@ int unshift(NODE **start, void *data, size_t size){
     return 0;
 }
 
-/*
- * Removes the first element of the linked list
- *  - return  0: Success
- *  - return -2: List is empty
-*/
 int shift(NODE **start){
     NODE *aux = *start;
 
@@ -123,12 +93,6 @@ int shift(NODE **start){
     return 0;
 }
 
-/*
- * Removes an element given an index
- *  - return  0: Success
- *  - return -1: Element not found
- *  - return -2: List is empty
-*/
 int splice(NODE **start, int index){
     NODE *aux = NULL, *prev = NULL;
     int size = 0;
@@ -169,9 +133,6 @@ int splice(NODE **start, int index){
     return 0;
 }
 
-/*
- * Returns the size of the linked list
-*/
 int length(NODE *start){
     NODE *aux = NULL;
     int size = 0;
@@ -185,9 +146,6 @@ int length(NODE *start){
     return size;
 }
 
-/*
- * Deletes all elements of the linked list
-*/
 void clear(NODE **start){
     NODE *aux = NULL, *next = NULL;
 
@@ -200,22 +158,11 @@ void clear(NODE **start){
     }
 }
 
-/*
- * Checks if the linked list is empty
- *  - return 1: is empty
- *  - return 0: not empty
-*/
 int isEmpty(NODE **start){
     return *start == NULL;
 }
 
-/*
- * Appends data to file given the filename
- *  - return  0: Success
- *  - return -1: Error saving data
- *  - return -3: Error opening file
-*/
-int appendToFile(char filename[100], void* data, size_t size){
+int appendToFile(char filename[MAX], void* data, size_t size){
     int res;
 
     FILE *fp = fopen(filename, "ab");
@@ -229,4 +176,3 @@ int appendToFile(char filename[100], void* data, size_t size){
     return 0;
 }
 
-#endif //PROJB_24473_LINKEDLIST_H

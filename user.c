@@ -1,42 +1,10 @@
-#ifndef PROJB_24473_USER_H
-#define PROJB_24473_USER_H
+#include "user.h"
 
-#include <stdio.h>
-#include <string.h>
-#include "constants.h"
-#include "LinkedList.h"
-
-
-typedef enum role{
-    decision_maker = 0 ,
-    admin = 1
-} ROLE;
-
-typedef struct user{
-    char username[100];
-    char name[100];
-    char password[100];
-    ROLE role;
-}USER;
-
-/* start::{CRUD} */
-
-/*
- * Adds a new user
- *  - return  0: Success
- *  - return -3: Out of memory
-*/
 int add_user(NODE **start, USER *user) {
     return push(start, user, sizeof(USER));
 }
 
-/*
- * Removes a user given a username
- *  - return  0: Success
- *  - return -1: User not found
- *  - return -2: List is empty
-*/
-int remove_user_by_username(NODE **start, char username[100]){
+int remove_user_by_username(NODE **start, char username[MAX]){
     NODE *aux = NULL;
     USER *data = NULL;
     int index = 0;
@@ -58,14 +26,7 @@ int remove_user_by_username(NODE **start, char username[100]){
     return -1;
 }
 
-/* end::{CRUD}*/
-
-/*
- * Finds a user given a username
- *  - Returns the user
- *  - Returns NULL if not found
-*/
-USER* find_user_by_username(NODE *start, char username[100]){
+USER* find_user_by_username(NODE *start, char username[MAX]){
     NODE *aux = NULL;
     USER *data = NULL;
     int index = 0;
@@ -87,25 +48,14 @@ USER* find_user_by_username(NODE *start, char username[100]){
     return NULL;
 }
 
-/*
- * Logins the user given username and password
- *  - return  0: Success
- *  - return -1: User not found
- *  - return -2: Wrong password
-*/
-int login(NODE *start, char username[100], char password[100]){
+USER* login(NODE *start, char username[MAX], char password[MAX]){
     USER *result = find_user_by_username(start, username);
 
-    if(result == NULL) return -1;
+    if(strcmp(result->password, password) != 0) return NULL;
 
-    if(strcmp(result->password, password) != 0) return -2;
-
-    return 0;
+    return result;
 }
 
-/*
- * Prints information of all users
-*/
 void print_users(NODE *start){
     NODE *aux = NULL;
     USER *data = NULL;
@@ -128,11 +78,6 @@ void print_users(NODE *start){
     }
 }
 
-/*
- * Saves all users to a file
- *  - return  0: Success
- *  - return -1: Error saving
-*/
 int save_users(NODE *start){
     NODE *aux = NULL;
     int res;
@@ -157,11 +102,6 @@ int save_users(NODE *start){
     return 0;
 }
 
-/*
- * Loads users from file
- *  - return  0: Success
- *  - return -3: Error opening file
-*/
 int load_users(NODE **start){
     int res;
 
@@ -186,5 +126,3 @@ int load_users(NODE **start){
 
     return 0;
 }
-
-#endif //PROJB_24473_USER_H
