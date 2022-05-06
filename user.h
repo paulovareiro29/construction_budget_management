@@ -19,6 +19,7 @@ typedef struct user{
 /*
  * Adds a new user
  *  - return  0: Success
+ *  - return -1: Username already exists
  *  - return -3: Out of memory
 */
 int add_user(NODE **start, USER *user);
@@ -64,5 +65,9 @@ int save_users(NODE *start);
 */
 int load_users(NODE **start);
 
+/*
+ * Prompts the admin to create a new user
+*/
+int create_user(NODE **users);
 
 #endif //PROJB_24473_USER_H

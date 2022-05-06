@@ -7,10 +7,10 @@ int push(NODE **start, void *data, size_t size){
     // Out of memory
     if(new == NULL) return -3;
 
-    new->data = malloc(size);
+    //new->data = malloc(size);
 
     // Out of memory
-    if(new->data == NULL) return -3;
+    //if(new->data == NULL) return -3;
 
     new->data = data;
     new->next = NULL;

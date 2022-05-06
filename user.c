@@ -1,6 +1,8 @@
 #include "user.h"
 
 int add_user(NODE **start, USER *user) {
+    USER* res = find_user_by_username(*start, user->username);
+    if(res != NULL) return -1;
     return push(start, user, sizeof(USER));
 }
 
@@ -51,7 +53,11 @@ USER* find_user_by_username(NODE *start, char username[MAX]){
 USER* login(NODE *start, char username[MAX], char password[MAX]){
     USER *result = find_user_by_username(start, username);
 
-    if(strcmp(result->password, password) != 0) return NULL;
+    if(result == NULL) return NULL;
+
+    if(strcmp(result->password, password) != 0) {
+        return NULL;
+    }
 
     return result;
 }
