@@ -16,15 +16,15 @@ typedef enum result{
 } RESULT;
 
 typedef struct detail {
-    char description[100];
+    char description[MAX];
     int quantity;
     float price;
 } DETAIL;
 
 typedef struct budget {
     int id;
-    char supplier[100];
-    char description[100];
+    char supplier[MAX];
+    char description[MAX];
     float total;
     NODE *details;
     int detailsSize;
@@ -32,8 +32,8 @@ typedef struct budget {
     /* when finished */
     RESULT result;
     time_t date;
-    char justification[100];
-    char user;
+    char justification[MAX];
+    char user[MAX];
 } BUDGET;
 
 /*
@@ -92,6 +92,8 @@ int save_budgets(NODE *start);
  *  - return  0: Success
  *  - return -3: Error opening file
 */
-int load_budgets(NODE **start);
+int load_budgets(NODE **budgets, NODE **queue);
+
+void print_budget(BUDGET *budget);
 
 #endif //PROJB_24473_BUDGET_H

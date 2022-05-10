@@ -50,7 +50,7 @@ int auth_menu(NODE *users, USER **auth) {
     return -1;
 }
 
-int admin_menu(NODE **users, NODE **budgets) {
+int admin_menu(NODE **users, NODE **budgets, NODE **queue) {
     int opc;
 
     do {
@@ -58,6 +58,7 @@ int admin_menu(NODE **users, NODE **budgets) {
         printf("MENU\n");
         printf("[ 1 ] Create new user\n");
         printf("[ 2 ] Add budget\n");
+        printf("[ 3 ] Listing options\n");
         /*printf("[ 3 ] Update budget\n");
         printf("[ 4 ] Delete budget\n");
         printf("[ 5 ] Find budget\n");*/
@@ -72,8 +73,11 @@ int admin_menu(NODE **users, NODE **budgets) {
                 any_key();
                 break;
             case 2:
-                create_budget(budgets);
+                create_budget(budgets, queue);
                 any_key();
+                break;
+            case 3:
+                budget_listing_menu(budgets, queue);
                 break;
             case 8:
                 print_users(*users);
@@ -88,7 +92,30 @@ int admin_menu(NODE **users, NODE **budgets) {
     } while (opc != 0);
 }
 
+int budget_listing_menu(NODE **budgets, NODE **queue){
+    int opc;
 
+    do {
+        clear_menu();
+        printf("BUDGET LISTING MENU\n");
+        printf("[ 1 ] List all pending budgets\n");
+        printf("[ 0 ] Exit\nOption:");
+        scanf("%i", &opc);
+
+        switch (opc) {
+            case 1:
+                list_pending_budgets(*queue);
+                any_key();
+                break;
+            default:
+                break;
+        }
+
+    } while (opc != 0);
+}
+
+
+/* START::{ADMIN FUNCTIONS} */
 int create_user(NODE **users) {
     int opc, res;
 
@@ -144,7 +171,7 @@ int create_user(NODE **users) {
     return -1;
 }
 
-int create_budget(NODE **budgets) {
+int create_budget(NODE **budgets, NODE **queue) {
     int opc, res;
 
     BUDGET *budget = (BUDGET *) malloc(sizeof(BUDGET));
@@ -191,7 +218,7 @@ int create_budget(NODE **budgets) {
         scanf("%f", &detail->price);
         fflush(stdin);
 
-        budget->total += detail->price;
+        budget->total += detail->price * detail->quantity;
 
         res = add_detail(&budget->details, detail);
 
@@ -208,6 +235,7 @@ int create_budget(NODE **budgets) {
     }
 
     res = add_budget(budgets, budget);
+    add_budget(queue, budget);
 
     if (res != 0) {
         free(budget);
@@ -218,3 +246,23 @@ int create_budget(NODE **budgets) {
     printf("Budget created successfully!");
     return 0;
 }
+
+void list_pending_budgets(NODE *queue){
+    NODE *aux = NULL;
+    BUDGET *budget_data = NULL;
+
+    if(queue == NULL){
+        printf("No pending budgets found!\n");
+        return;
+    }
+
+    aux = queue;
+    while(aux != NULL){
+        budget_data = (BUDGET*) aux->data;
+
+        print_budget(budget_data);
+
+        aux = aux->next;
+    }
+}
+/* END::{ADMIN FUNCTIONS}*/

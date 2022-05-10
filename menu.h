@@ -24,7 +24,12 @@ int auth_menu(NODE *users, USER **auth);
  * Admin menu
  *  - return -4: Sign out
 */
-int admin_menu(NODE **users, NODE **budgets);
+int admin_menu(NODE **users, NODE **budgets, NODE **queue);
+
+/*
+ * Listing menu
+*/
+int budget_listing_menu(NODE **budgets, NODE **queue);
 
 /*
  * Prompts the user for new user info
@@ -40,6 +45,11 @@ int create_user(NODE **users);
  *  - return -1: Failed to create budget
  *  - return -3: Out of memory
 */
-int create_budget(NODE **budgets);
+int create_budget(NODE **budgets, NODE **queue);
+
+/*
+ * Lists all information about the pending budgets
+*/
+void list_pending_budgets(NODE *queue);
 
 #endif //PROJB_24473_MENU_H

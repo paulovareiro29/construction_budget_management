@@ -1,3 +1,4 @@
+#include <time.h>
 #include "budget.h"
 
 int add_budget(NODE **start, BUDGET *budget){
@@ -140,11 +141,10 @@ int save_budgets(NODE *start){
     return 0;
 }
 
-int load_budgets(NODE **start){
+int load_budgets(NODE **budgets, NODE **queue){
     int res, i;
 
     FILE *fp = fopen(budgets_filename,"rb");
-
 
     if(fp == NULL) return -3;
 
@@ -161,7 +161,9 @@ int load_budgets(NODE **start){
         // Reset pointer
         budget_data->details = NULL;
 
-        add_budget(start, budget_data);
+        add_budget(budgets, budget_data);
+
+        if(budget_data->state == pending) add_budget(queue, budget_data);
 
         for(i = 0; i < budget_data->detailsSize; i++){
 
@@ -181,4 +183,61 @@ int load_budgets(NODE **start){
     fclose(fp);
 
     return 0;
+}
+
+void print_budget(BUDGET *budget){
+    NODE *aux = NULL;
+    DETAIL *detail = NULL;
+
+    printf("BUDGET INFO\n");
+    printf("\t- Supplier: %s\n", budget->supplier);
+    printf("\t- Description: %s\n", budget->description);
+    printf("\t- Total: %.2f$\n", budget->total);
+
+    switch (budget->state) {
+        case 0:
+            printf("\t- State: Pending\n");
+            break;
+        case 1:
+            printf("\t- State: Analysing\n");
+            break;
+        case 2:
+            printf("\t- State: Finished\n");
+            break;
+    }
+
+    aux = budget->details;
+
+    if(aux == NULL){
+        printf("\t- Details list empty!\n");
+    }else{
+        printf("\t- Details list:\n");
+        while(aux != NULL){
+            detail = (DETAIL*) aux->data;
+
+            printf("\t\t- Item:\n");
+            printf("\t\t  - Description: %s\n", detail->description);
+            printf("\t\t  - Quantity: %d\n", detail->quantity);
+            printf("\t\t  - Unitary price: %.2f$\n", detail->price);
+
+            aux = aux->next;
+        }
+    }
+
+    if(budget->state != finished) return;
+
+    switch (budget->result) {
+        case -1:
+            break;
+        case 0:
+            printf("\t- Result: Denied\n");
+            break;
+        case 1:
+            printf("\t- Result: Approved\n");
+            break;
+    }
+
+    printf("\t- Date: %s\n", asctime(gmtime(&budget->date)));
+    printf("\t- Justification: %s\n", budget->justification);
+    printf("\t- User that analysed: %s\n", budget->user);
 }

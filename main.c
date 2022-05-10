@@ -3,11 +3,12 @@
 #include "user.h"
 #include "budget.h"
 
-int load(NODE **users, NODE **budgets){
+int load(NODE **users, NODE **budgets, NODE **queue){
 
     /* load program from files */
     load_users(users);
-    load_budgets(budgets);
+    load_budgets(budgets, queue);
+
 
     // If user file was empty, populate with root
     if(length(*users) == 0){
@@ -21,10 +22,11 @@ int main() {
     int res = 0;
     NODE *users = NULL;
     NODE *budgets = NULL;
+    NODE *queue = NULL;
 
     USER *auth = NULL;
 
-    load(&users, &budgets);
+    load(&users, &budgets, &queue);
 
     /*
      * while res == -4, it will keep in a loop
@@ -38,7 +40,7 @@ int main() {
         if (auth_menu(users, &auth) == -1) return 0;
 
         if(auth->role == admin){
-            res = admin_menu(&users, &budgets);
+            res = admin_menu(&users, &budgets, &queue);
         }else{
             printf("USER MENU");
         }
