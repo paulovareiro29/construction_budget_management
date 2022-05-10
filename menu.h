@@ -22,9 +22,24 @@ int auth_menu(NODE *users, USER **auth);
 
 /*
  * Admin menu
+ *  - return -4: Sign out
 */
 int admin_menu(NODE **users, NODE **budgets);
 
+/*
+ * Prompts the user for new user info
+ *  - return  0: Success
+ *  - return -1: Failed to create user
+ *  - return -3: Out of memory
+*/
 int create_user(NODE **users);
+
+/*
+ * Prompts the user for new budget info
+ *  - return  0: Success
+ *  - return -1: Failed to create budget
+ *  - return -3: Out of memory
+*/
+int create_budget(NODE **budgets);
 
 #endif //PROJB_24473_MENU_H

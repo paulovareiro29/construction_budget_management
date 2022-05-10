@@ -9,19 +9,16 @@ int load(NODE **users, NODE **budgets){
     load_users(users);
     load_budgets(budgets);
 
-
     // If user file was empty, populate with root
     if(length(*users) == 0){
         USER root = {"root","root","root",admin};
         add_user(users,&root);
         save_users(*users);
     }
-
-    printf("size: %i", length(*users));
-
 }
 
 int main() {
+    int res = 0;
     NODE *users = NULL;
     NODE *budgets = NULL;
 
@@ -30,16 +27,24 @@ int main() {
     load(&users, &budgets);
 
     /*
-     * Enters the auth menu aka login menu.
-     * returning -1 means that the user wants to exit the program.
-     */
-    if (auth_menu(users, &auth) == -1) return 0;
+     * while res == -4, it will keep in a loop
+     * res == -4, means that user has selected 'sign out' on the menu
+    */
+    do {
+        /*
+         * Enters the auth menu aka login menu.
+         * returning -1 means that the user wants to exit the program.
+         */
+        if (auth_menu(users, &auth) == -1) return 0;
 
-    if(auth->role == admin){
-        admin_menu(&users, &budgets);
-    }else{
-        printf("USER MENU");
-    }
+        if(auth->role == admin){
+            res = admin_menu(&users, &budgets);
+        }else{
+            printf("USER MENU");
+        }
+
+    }while(res == -4);
+
 
     printf("Exiting...");
 
