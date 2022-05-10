@@ -52,4 +52,25 @@ int create_budget(NODE **budgets, NODE **queue);
 */
 void list_pending_budgets(NODE *queue);
 
+/*
+ * Lists all information about the finished budgets
+*/
+void list_finished_budgets(NODE *budgets);
+
+/*
+ * Lists all information about the approved budgets
+*/
+void list_approved_budgets(NODE *budgets);
+
+/*
+ * Lists all information about the budgets that are above a given amount
+*/
+void list_budgets_above_amount(NODE *budgets, float amount);
+
+/*
+ * Lists all information about the budgets given the supplier
+*/
+void list_budgets_by_supplier(NODE *budgets, char supplier[MAX]);
+
+
 #endif //PROJB_24473_MENU_H

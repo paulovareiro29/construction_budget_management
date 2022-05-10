@@ -94,17 +94,43 @@ int admin_menu(NODE **users, NODE **budgets, NODE **queue) {
 
 int budget_listing_menu(NODE **budgets, NODE **queue){
     int opc;
+    float amount = 0;
+    char supplier[MAX];
 
     do {
         clear_menu();
         printf("BUDGET LISTING MENU\n");
         printf("[ 1 ] List all pending budgets\n");
+        printf("[ 2 ] List all finished budgets\n");
+        printf("[ 3 ] List all approved budgets\n");
+        printf("[ 4 ] List all budgets above given amount\n");
+        printf("[ 5 ] List all budgets by supplier\n");
         printf("[ 0 ] Exit\nOption:");
         scanf("%i", &opc);
 
         switch (opc) {
             case 1:
                 list_pending_budgets(*queue);
+                any_key();
+                break;
+            case 2:
+                list_finished_budgets(*budgets);
+                any_key();
+                break;
+            case 3:
+                list_approved_budgets(*budgets);
+                any_key();
+                break;
+            case 4:
+                printf("Enter the amount:");
+                scanf("%f", &amount);
+                list_budgets_above_amount(*budgets, amount);
+                any_key();
+                break;
+            case 5:
+                printf("Enter the supplier:");
+                scanf("%s", supplier);
+                list_budgets_by_supplier(*budgets,supplier);
                 any_key();
                 break;
             default:
@@ -264,5 +290,89 @@ void list_pending_budgets(NODE *queue){
 
         aux = aux->next;
     }
+}
+
+void list_finished_budgets(NODE *budgets){
+    int count = 0;
+    NODE *aux = NULL;
+    BUDGET *budget_data = NULL;
+
+
+    aux = budgets;
+    while(aux != NULL){
+        budget_data = (BUDGET*) aux->data;
+
+        if(budget_data->state == finished){
+            print_budget(budget_data);
+            count++;
+        }
+
+        aux = aux->next;
+    }
+
+    if(count == 0) printf("No finished budgets found!\n");
+}
+
+void list_approved_budgets(NODE *budgets){
+    int count = 0;
+    NODE *aux = NULL;
+    BUDGET *budget_data = NULL;
+
+
+    aux = budgets;
+    while(aux != NULL){
+        budget_data = (BUDGET*) aux->data;
+
+        if(budget_data->state == finished && budget_data->result == approved){
+            print_budget(budget_data);
+            count++;
+        }
+
+        aux = aux->next;
+    }
+
+    if(count == 0) printf("No finished and approved budgets found!\n");
+}
+
+void list_budgets_above_amount(NODE *budgets, float amount){
+    int count = 0;
+    NODE *aux = NULL;
+    BUDGET *budget_data = NULL;
+
+
+    aux = budgets;
+    while(aux != NULL){
+        budget_data = (BUDGET*) aux->data;
+
+        if(budget_data->total > amount){
+            print_budget(budget_data);
+            count++;
+        }
+
+        aux = aux->next;
+    }
+
+    if(count == 0) printf("No budgets found with total above %.2f$!\n", amount);
+}
+
+void list_budgets_by_supplier(NODE *budgets, char supplier[MAX]){
+    int count = 0;
+    NODE *aux = NULL;
+    BUDGET *budget_data = NULL;
+
+
+    aux = budgets;
+    while(aux != NULL){
+        budget_data = (BUDGET*) aux->data;
+
+        if(strcmp(budget_data->supplier, supplier) == 0){
+            print_budget(budget_data);
+            count++;
+        }
+
+        aux = aux->next;
+    }
+
+    if(count == 0) printf("No budgets found by supplier: %s!\n", supplier);
 }
 /* END::{ADMIN FUNCTIONS}*/
