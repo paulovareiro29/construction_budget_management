@@ -125,7 +125,7 @@ int user_menu(USER auth, NODE **budgets, NODE **queue){
 int budget_listing_menu(NODE **budgets, NODE **queue){
     int opc;
     float amount = 0;
-    char supplier[MAX];
+    char string[MAX];
 
     do {
         clear_menu();
@@ -135,6 +135,7 @@ int budget_listing_menu(NODE **budgets, NODE **queue){
         printf("[ 3 ] List all approved budgets\n");
         printf("[ 4 ] List all budgets above given amount\n");
         printf("[ 5 ] List all budgets by supplier\n");
+        printf("[ 6 ] List all finished budgets by certain user\n");
         printf("[ 0 ] Exit\nOption:");
         scanf("%i", &opc);
 
@@ -159,8 +160,14 @@ int budget_listing_menu(NODE **budgets, NODE **queue){
                 break;
             case 5:
                 printf("Enter the supplier:");
-                scanf("%s", supplier);
-                list_budgets_by_supplier(*budgets,supplier);
+                scanf("%s", string);
+                list_budgets_by_supplier(*budgets,string);
+                any_key();
+                break;
+            case 6:
+                printf("Enter the username:");
+                scanf("%s", string);
+                list_finished_budgets_by_user(*budgets, string);
                 any_key();
                 break;
             default:
@@ -478,6 +485,74 @@ void list_user_ranking(NODE *users, NODE *budgets){
     }
 
     free(ranking);
+}
+
+void list_finished_budgets_by_user(NODE *budgets, char username[MAX]){
+    NODE *aux = NULL;
+    BUDGET *list = NULL, temp;
+    int size = 0, i, j, pos = 0;
+
+    /* Counts how many finished budgets there is */
+    aux = budgets;
+    while(aux != NULL){
+        BUDGET *data = (BUDGET *) aux->data;
+
+        if(data->state == finished && strcmp(data->user, username) == 0) size++;
+        aux = aux->next;
+    }
+
+    if(size == 0){
+        printf("List is empty!");
+        return;
+    }
+
+    list = (BUDGET *) calloc(size, sizeof (BUDGET));
+
+    /* Populate the array with all budgets */
+    aux = budgets;
+    while(aux != NULL){
+        BUDGET *data = (BUDGET *) aux->data;
+
+        if(data->state == finished  && strcmp(data->user, username) == 0){
+            list[pos] = *data;
+            pos++;
+        }
+
+        aux = aux->next;
+    }
+
+
+    // Insertion sort - date
+    for(i = 1; i < pos; i++){
+        temp = list[i];
+        j = i - 1;
+        while(j >= 0 && list[j].date > temp.date){
+            list[j + 1] = list[j];
+            j--;
+        }
+
+        list[j + 1] = temp;
+    }
+
+    // Insertion sort - result
+    for(i = 1; i < pos; i++){
+        temp = list[i];
+        j = i - 1;
+        while(j >= 0 && list[j].result > temp.result){
+            list[j + 1] = list[j];
+            j--;
+        }
+
+        list[j + 1] = temp;
+    }
+
+
+    printf("\nBUDGETS\n", size);
+    for(i = 0; i < pos; i++){
+        print_budget(&list[i]);
+    }
+
+    free(list);
 }
 
 // END::{ADMIN FUNCTIONS}

@@ -86,6 +86,12 @@ void list_budgets_by_supplier(NODE *budgets, char supplier[MAX]);
 void list_user_ranking(NODE *users, NODE *budgets);
 
 /*
+ * Lists all information about the finished budgets analysed by a certain user
+ * ordered by date and result
+*/
+void list_finished_budgets_by_user(NODE *budgets, char username[MAX]);
+
+/*
  * Prompts the user with budget info to analyse
 */
 void analyse_budget(USER auth, NODE **budgets, NODE **queue);
