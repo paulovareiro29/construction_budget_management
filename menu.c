@@ -60,9 +60,7 @@ int admin_menu(USER auth, NODE **users, NODE **budgets, NODE **queue) {
         printf("[ 1 ] Create new user\n");
         printf("[ 2 ] Add budget\n");
         printf("[ 3 ] Listing options\n");
-        /*printf("[ 3 ] Update budget\n");
-        printf("[ 4 ] Delete budget\n");
-        printf("[ 5 ] Find budget\n");*/
+        printf("[ 4 ] User ranking\n");
         printf("[ 8 ] List all users\n");
         printf("[ 9 ] Sign out\n");
         printf("[ 0 ] Exit\nOption:");
@@ -80,6 +78,10 @@ int admin_menu(USER auth, NODE **users, NODE **budgets, NODE **queue) {
                 break;
             case 3:
                 budget_listing_menu(budgets, queue);
+                break;
+            case 4:
+                list_user_ranking(*users, *budgets);
+                any_key();
                 break;
             case 8:
                 print_users(*users);
@@ -402,6 +404,80 @@ void list_budgets_by_supplier(NODE *budgets, char supplier[MAX]){
     }
 
     if(count == 0) printf("No budgets found by supplier: %s!\n", supplier);
+}
+
+void list_user_ranking(NODE *users, NODE *budgets){
+    NODE *aux = NULL;
+    RANKING *ranking = NULL, temp;
+    int size = 0, i, j, pos = 0;
+
+    /* Counts how many users there is */
+    aux = users;
+    while(aux != NULL){
+        USER *data = (USER *) aux->data;
+
+        if(data->role == decision_maker) size++;
+        aux = aux->next;
+    }
+
+    if(size == 0){
+        printf("Ranking is empty!");
+        return;
+    }
+
+    ranking = (RANKING *) calloc(size, sizeof (RANKING));
+
+    /* Populate the array with all users */
+    aux = users;
+    while(aux != NULL){
+        USER *data = (USER *) aux->data;
+
+        if(data->role == decision_maker){
+            strcpy(ranking[pos].username, data->username);
+            ranking[pos].score = 0;
+            pos++;
+        }
+
+        aux = aux->next;
+    }
+
+    /* Iterate through the budgets list */
+    aux = budgets;
+    while(aux != NULL){
+        BUDGET *data = (BUDGET *) aux->data;
+
+        if(data->state == finished){
+            /* Loop through all the ranking array */
+            for(i = 0; i < pos; i++){
+                /* When user found, increment the score */
+                if(strcmp(ranking[i].username, data->user) == 0 ){
+                    ranking[i].score++;
+                    break;
+                }
+            }
+        }
+
+        aux = aux->next;
+    }
+
+    // Insertion sort
+    for(i = 1; i < pos; i++){
+        temp = ranking[i];
+        j = i - 1;
+        while(j >= 0 && ranking[j].score < temp.score){
+            ranking[j + 1] = ranking[j];
+            j--;
+        }
+
+        ranking[j + 1] = temp;
+    }
+
+    printf("\nUSER RANKING\n", size);
+    for(i = 0; i < pos; i++){
+        printf("%i: %i - %s\n", i + 1, ranking[i].score, ranking[i].username);
+    }
+
+    free(ranking);
 }
 
 // END::{ADMIN FUNCTIONS}

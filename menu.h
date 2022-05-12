@@ -81,6 +81,11 @@ void list_budgets_above_amount(NODE *budgets, float amount);
 void list_budgets_by_supplier(NODE *budgets, char supplier[MAX]);
 
 /*
+ * Generates a ranking of users ordered by the number of budgets analysed
+*/
+void list_user_ranking(NODE *users, NODE *budgets);
+
+/*
  * Prompts the user with budget info to analyse
 */
 void analyse_budget(USER auth, NODE **budgets, NODE **queue);

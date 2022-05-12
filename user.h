@@ -16,6 +16,11 @@ typedef struct user{
     ROLE role;
 }USER;
 
+typedef struct ranking {
+    char username[MAX];
+    int score;
+}RANKING;
+
 /*
  * Adds a new user
  *  - return  0: Success
