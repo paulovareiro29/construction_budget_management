@@ -617,6 +617,7 @@ int save_finished_budgets(NODE *budgets){
         temp = list[i];
 
         fprintf(fp,"BUDGET INFO\n");
+        printf("\t- ID: %i\n", temp.id);
         fprintf(fp,"\t- Supplier: %s\n", temp.supplier);
         fprintf(fp,"\t- Description: %s\n", temp.description);
         fprintf(fp,"\t- Total: %.2f$\n", temp.total);

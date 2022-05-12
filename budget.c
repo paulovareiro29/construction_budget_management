@@ -2,6 +2,21 @@
 #include "budget.h"
 
 int add_budget(NODE **start, BUDGET *budget){
+    NODE *aux = NULL;
+    BUDGET *temp = NULL;
+
+    if(*start == NULL){
+        budget->id = 0;
+    }else{
+        aux = *start;
+        while(aux->next != NULL){
+            aux = aux->next;
+        }
+
+        temp = (BUDGET *) aux->data;
+        budget->id = temp->id + 1;
+    }
+
     return push(start,budget, sizeof (BUDGET));
 }
 
@@ -190,6 +205,7 @@ void print_budget(BUDGET *budget){
     DETAIL *detail = NULL;
 
     printf("BUDGET INFO\n");
+    printf("\t- ID: %i\n", budget->id);
     printf("\t- Supplier: %s\n", budget->supplier);
     printf("\t- Description: %s\n", budget->description);
     printf("\t- Total: %.2f$\n", budget->total);
