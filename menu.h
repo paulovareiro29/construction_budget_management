@@ -92,6 +92,14 @@ void list_user_ranking(NODE *users, NODE *budgets);
 void list_finished_budgets_by_user(NODE *budgets, char username[MAX]);
 
 /*
+ * Saves to a text file all finished budgets
+ * ordered by amount
+ *  - return  0: Success
+ *  - return -3: Error opening file
+*/
+int save_finished_budgets(NODE *budgets);
+
+/*
  * Prompts the user with budget info to analyse
 */
 void analyse_budget(USER auth, NODE **budgets, NODE **queue);

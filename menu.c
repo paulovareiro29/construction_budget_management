@@ -61,7 +61,8 @@ int admin_menu(USER auth, NODE **users, NODE **budgets, NODE **queue) {
         printf("[ 2 ] Add budget\n");
         printf("[ 3 ] Listing options\n");
         printf("[ 4 ] User ranking\n");
-        printf("[ 8 ] List all users\n");
+        printf("[ 4 ] User ranking\n");
+        printf("[ 5 ] Save finished budgets to text file\n");
         printf("[ 9 ] Sign out\n");
         printf("[ 0 ] Exit\nOption:");
         scanf("%i", &opc);
@@ -81,6 +82,10 @@ int admin_menu(USER auth, NODE **users, NODE **budgets, NODE **queue) {
                 break;
             case 4:
                 list_user_ranking(*users, *budgets);
+                any_key();
+                break;
+            case 5:
+                save_finished_budgets(*budgets);
                 any_key();
                 break;
             case 8:
@@ -555,6 +560,120 @@ void list_finished_budgets_by_user(NODE *budgets, char username[MAX]){
     free(list);
 }
 
+int save_finished_budgets(NODE *budgets){
+    NODE *aux = NULL;
+    DETAIL *detail = NULL;
+    BUDGET *list = NULL, temp;
+    int size = 0, i, j, pos = 0;
+
+    FILE *fp = fopen(finished_budgets_filename, "w");
+
+    if(fp == NULL) return -3;
+
+    /* Counts how many finished budgets there is */
+    aux = budgets;
+    while(aux != NULL){
+        BUDGET *data = (BUDGET *) aux->data;
+
+        if(data->state == finished) size++;
+        aux = aux->next;
+    }
+
+    if(size == 0){
+        printf("List is empty!");
+        fprintf(fp,"");
+        return 0;
+    }
+
+    list = (BUDGET *) calloc(size, sizeof (BUDGET));
+
+    /* Populate the array with all budgets */
+    aux = budgets;
+    while(aux != NULL){
+        BUDGET *data = (BUDGET *) aux->data;
+
+        if(data->state == finished){
+            list[pos] = *data;
+            pos++;
+        }
+
+        aux = aux->next;
+    }
+
+
+    // Insertion sort - amount
+    for(i = 1; i < pos; i++){
+        temp = list[i];
+        j = i - 1;
+        while(j >= 0 && list[j].total > temp.total){
+            list[j + 1] = list[j];
+            j--;
+        }
+
+        list[j + 1] = temp;
+    }
+
+    for(i = 0; i < pos; i++){
+        temp = list[i];
+
+        fprintf(fp,"BUDGET INFO\n");
+        fprintf(fp,"\t- Supplier: %s\n", temp.supplier);
+        fprintf(fp,"\t- Description: %s\n", temp.description);
+        fprintf(fp,"\t- Total: %.2f$\n", temp.total);
+
+        switch (temp.state) {
+            case 0:
+                fprintf(fp,"\t- State: Pending\n");
+                break;
+            case 1:
+                fprintf(fp,"\t- State: Analysing\n");
+                break;
+            case 2:
+                fprintf(fp,"\t- State: Finished\n");
+                break;
+        }
+
+        aux = temp.details;
+
+        if(aux == NULL){
+            fprintf(fp,"\t- Details list empty!\n");
+        }else{
+            fprintf(fp,"\t- Details list:\n");
+            while(aux != NULL){
+                detail = (DETAIL*) aux->data;
+
+                fprintf(fp,"\t\t- Item:\n");
+                fprintf(fp,"\t\t  - Description: %s\n", detail->description);
+                fprintf(fp,"\t\t  - Quantity: %d\n", detail->quantity);
+                fprintf(fp,"\t\t  - Unitary price: %.2f$\n", detail->price);
+
+                aux = aux->next;
+            }
+        }
+
+        switch (temp.result) {
+            case -1:
+                break;
+            case 0:
+                fprintf(fp,"\t- Result: Denied\n");
+                break;
+            case 1:
+                fprintf(fp,"\t- Result: Approved\n");
+                break;
+        }
+
+        fprintf(fp,"\t- Date: %s\n", asctime(gmtime(&temp.date)));
+        fprintf(fp,"\t- Justification: %s\n", temp.justification);
+        fprintf(fp,"\t- User that analysed: %s\n", temp.user);
+        fprintf(fp,"\n\n");
+    }
+
+
+
+    free(list);
+    fclose(fp);
+    return 0;
+}
 // END::{ADMIN FUNCTIONS}
 
 // START::{USER FUNCTIONS}
