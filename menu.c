@@ -1,6 +1,7 @@
 #include "menu.h"
 #include "budget.h"
 #include <conio.h>
+#include <time.h>
 
 void clear_menu() {
     int i;
@@ -66,6 +67,7 @@ int admin_menu(USER auth, NODE **users, NODE **budgets, NODE **queue) {
         printf("[ 9 ] Sign out\n");
         printf("[ 0 ] Exit\nOption:");
         scanf("%i", &opc);
+        fflush(stdin);
 
         switch (opc) {
             case 1:
@@ -81,6 +83,32 @@ int admin_menu(USER auth, NODE **users, NODE **budgets, NODE **queue) {
                 break;
             case 8:
                 print_users(*users);
+                any_key();
+                break;
+            case 9:
+                return -4;
+            default:
+                break;
+        }
+
+    } while (opc != 0);
+}
+
+int user_menu(USER auth, NODE **budgets, NODE **queue){
+    int opc;
+
+    do {
+        clear_menu();
+        printf("MENU\n");
+        printf("[ 1 ] Analyse budget\n");
+        printf("[ 9 ] Sign out\n");
+        printf("[ 0 ] Exit\nOption:");
+        scanf("%i", &opc);
+        fflush(stdin);
+
+        switch (opc) {
+            case 1:
+                analyse_budget(auth,budgets,queue);
                 any_key();
                 break;
             case 9:
@@ -140,8 +168,8 @@ int budget_listing_menu(NODE **budgets, NODE **queue){
     } while (opc != 0);
 }
 
+// START::{ADMIN FUNCTIONS}
 
-/* START::{ADMIN FUNCTIONS} */
 int create_user(NODE **users) {
     int opc, res;
 
@@ -375,4 +403,44 @@ void list_budgets_by_supplier(NODE *budgets, char supplier[MAX]){
 
     if(count == 0) printf("No budgets found by supplier: %s!\n", supplier);
 }
-/* END::{ADMIN FUNCTIONS}*/
+
+// END::{ADMIN FUNCTIONS}
+
+// START::{USER FUNCTIONS}
+
+void analyse_budget(USER auth,NODE **budgets, NODE **queue){
+    int result;
+    char justification[MAX];
+
+    if(*queue == NULL) {
+        printf("Queue is empty!");
+        return;
+    }
+
+    BUDGET *budget = (BUDGET*) (*queue)->data;
+
+    print_budget(budget);
+
+    budget->state = analysing;
+
+    do{
+        printf("FINAL RESULT\n[1] Approved\n[0] Denied\nOption:");
+        scanf("%i", &result);
+        fflush(stdin);
+    }while(result < 0 || result > 1);
+
+    printf("Justification:");
+    gets(justification);
+    fflush(stdin);
+
+    budget->result = result;
+    strcpy(budget->justification, justification);
+    strcpy(budget->user ,auth.username);
+    budget->date = time(NULL);
+    budget->state = finished;
+
+    shift(queue);
+    save_budgets(*budgets);
+}
+
+// END::{USER FUNCTIONS}

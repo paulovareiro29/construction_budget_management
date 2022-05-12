@@ -46,7 +46,7 @@ int main() {
         if(auth->role == admin){
             res = admin_menu(*auth, &users, &budgets, &queue);
         }else{
-            printf("USER MENU");
+            res = user_menu(*auth,&budgets,&queue);
         }
 
     }while(res == -4);

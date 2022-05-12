@@ -2,6 +2,7 @@
 #define PROJB_24473_MENU_H
 
 #include "user.h"
+#include "budget.h"
 
 /*
  * Clears the menu screen
@@ -25,6 +26,13 @@ int auth_menu(NODE *users, USER **auth);
  *  - return -4: Sign out
 */
 int admin_menu(USER auth, NODE **users, NODE **budgets, NODE **queue);
+
+/*
+ * User menu
+ *  - return -4: Sign out
+*/
+int user_menu(USER auth, NODE **budgets, NODE **queue);
+
 
 /*
  * Listing menu
@@ -72,5 +80,9 @@ void list_budgets_above_amount(NODE *budgets, float amount);
 */
 void list_budgets_by_supplier(NODE *budgets, char supplier[MAX]);
 
+/*
+ * Prompts the user with budget info to analyse
+*/
+void analyse_budget(USER auth, NODE **budgets, NODE **queue);
 
 #endif //PROJB_24473_MENU_H
