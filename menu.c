@@ -50,7 +50,7 @@ int auth_menu(NODE *users, USER **auth) {
     return -1;
 }
 
-int admin_menu(NODE **users, NODE **budgets, NODE **queue) {
+int admin_menu(USER auth, NODE **users, NODE **budgets, NODE **queue) {
     int opc;
 
     do {

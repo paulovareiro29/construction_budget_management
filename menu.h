@@ -24,7 +24,7 @@ int auth_menu(NODE *users, USER **auth);
  * Admin menu
  *  - return -4: Sign out
 */
-int admin_menu(NODE **users, NODE **budgets, NODE **queue);
+int admin_menu(USER auth, NODE **users, NODE **budgets, NODE **queue);
 
 /*
  * Listing menu

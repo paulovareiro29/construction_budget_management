@@ -13,8 +13,13 @@ int load(NODE **users, NODE **budgets, NODE **queue){
     // If user file was empty, populate with root
     if(length(*users) == 0){
         USER root = {"root","root","root",admin};
-        add_user(users,&root);
-        save_users(*users);
+        USER *data = (USER*) malloc(sizeof (USER));
+
+        if(data != NULL){
+            *data = root;
+            add_user(users,data);
+            save_users(*users);
+        }
     }
 }
 
@@ -27,7 +32,6 @@ int main() {
     USER *auth = NULL;
 
     load(&users, &budgets, &queue);
-
     /*
      * while res == -4, it will keep in a loop
      * res == -4, means that user has selected 'sign out' on the menu
@@ -40,7 +44,7 @@ int main() {
         if (auth_menu(users, &auth) == -1) return 0;
 
         if(auth->role == admin){
-            res = admin_menu(&users, &budgets, &queue);
+            res = admin_menu(*auth, &users, &budgets, &queue);
         }else{
             printf("USER MENU");
         }

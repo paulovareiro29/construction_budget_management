@@ -76,9 +76,17 @@ void print_users(NODE *start){
     while(aux != NULL){
         data = (USER*) aux->data;
 
-        printf("Username: %s\n", data->username);
+        printf("\nUsername: %s\n", data->username);
         printf("Name: %s\n", data->name);
-        printf("Role: %i\n", data->role);
+
+        switch(data->role){
+            case admin:
+                printf("Role: Admin\n");
+                break;
+            case decision_maker:
+                printf("Role: User\n");
+                break;
+        }
 
         aux = aux->next;
     }
