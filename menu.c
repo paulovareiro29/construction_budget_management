@@ -61,13 +61,13 @@ int admin_menu(USER auth, NODE **users, NODE **budgets, NODE **queue) {
         printf("[ 2 ] Add budget\n");
         printf("[ 3 ] Listing options\n");
         printf("[ 4 ] User ranking\n");
-        printf("[ 4 ] User ranking\n");
         printf("[ 5 ] Save finished budgets to text file\n");
         printf("[ 9 ] Sign out\n");
         printf("[ 0 ] Exit\nOption:");
         scanf("%i", &opc);
         fflush(stdin);
 
+        clear_menu();
         switch (opc) {
             case 1:
                 create_user(users);
@@ -112,6 +112,7 @@ int user_menu(USER auth, NODE **budgets, NODE **queue){
         printf("[ 0 ] Exit\nOption:");
         scanf("%i", &opc);
         fflush(stdin);
+        clear_menu();
 
         switch (opc) {
             case 1:
@@ -143,6 +144,7 @@ int budget_listing_menu(NODE **budgets, NODE **queue){
         printf("[ 6 ] List all finished budgets by certain user\n");
         printf("[ 0 ] Exit\nOption:");
         scanf("%i", &opc);
+        clear_menu();
 
         switch (opc) {
             case 1:
@@ -250,8 +252,7 @@ int create_budget(NODE **budgets, NODE **queue) {
     budget->state = pending;
     budget->details = NULL;
 
-    clear_menu();
-    printf("NEW BUDGET\n");
+    printf("\nNEW BUDGET\n");
 
     printf(" - Supplier:");
     scanf("%s", budget->supplier);
