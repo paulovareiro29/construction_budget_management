@@ -47,6 +47,11 @@ int user_menu(USER auth, NODE **budgets, NODE **queue);
 int budget_listing_menu(NODE **budgets, NODE **queue);
 
 /*
+ * Budgets CRUD menu
+*/
+int budget_crud_menu(NODE **budgets, NODE **queue);
+
+/*
  * Prompts the user for new user info
  *  - return  0: Success
  *  - return -1: Failed to create user
@@ -61,6 +66,26 @@ int create_user(NODE **users);
  *  - return -3: Out of memory
 */
 int create_budget(NODE **budgets, NODE **queue);
+
+/*
+ * Prompts the user the ID to list the budget
+*/
+void read_budget_by_id(NODE **budgets);
+
+/*
+ * Prompts the user the ID and new info to update the budget
+*/
+void update_budget_by_id(NODE **budgets, NODE **queue);
+
+/*
+ * Menu to update te user details
+*/
+void budget_details_menu(NODE **budgets, BUDGET *budget);
+
+/*
+ * Prompts the user the ID to remove the budget
+*/
+void crud_remove_budget_by_id(NODE **budgets, NODE **queue);
 
 /*
  * Prompts the user for new detail info

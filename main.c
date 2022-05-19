@@ -7,7 +7,8 @@ int load(NODE **users, NODE **budgets, NODE **queue){
 
     /* load program from files */
     load_users(users);
-    load_budgets(budgets, queue);
+    load_budgets(budgets);
+    load_queue(*budgets, queue);
 
 
     // If user file was empty, populate with root

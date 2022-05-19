@@ -56,7 +56,7 @@ BUDGET* find_budget_by_id(NODE *start, int id);
  *  - return -1: Budget not found
  *  - return -2: List is empty
 */
-int remove_budget_by_id(NODE **start, int id);
+int remove_budget_by_id(NODE **budgets, NODE **queue, int id);
 
 /*
  * Adds a new detail
@@ -72,6 +72,11 @@ int add_detail(NODE **start, DETAIL *detail);
  *  - returns NULL if not found
 */
 DETAIL* find_detail_by_position(NODE *start, int position);
+
+/*
+ * Calculates budget total given certain budget as parameter
+*/
+int calculate_budget_total(BUDGET *budget);
 
 /*
  * Removes a detail given the position
@@ -93,7 +98,9 @@ int save_budgets(NODE *start);
  *  - return  0: Success
  *  - return -3: Error opening file
 */
-int load_budgets(NODE **budgets, NODE **queue);
+int load_budgets(NODE **budgets);
+
+int load_queue(NODE *budgets, NODE **queue);
 
 void print_budget(BUDGET *budget);
 

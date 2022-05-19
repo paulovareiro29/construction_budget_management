@@ -42,20 +42,23 @@ BUDGET* find_budget_by_id(NODE *start, int id){
     return NULL;
 }
 
-int remove_budget_by_id(NODE **start, int id){
+int remove_budget_by_id(NODE **budgets, NODE **queue, int id){
     NODE *aux = NULL;
     BUDGET *data = NULL;
-    int index = 0;
+    int index = 0, res;
 
     // Empty list
-    if(*start == NULL) return -2;
+    if(*budgets == NULL) return -2;
 
 
-    aux = *start;
+    aux = *budgets;
     while(aux != NULL){
         data = (BUDGET *) aux->data;
         if(data->id == id){
-            return splice(start, index);
+            clear(&data->details);
+            res = splice(budgets, index);
+            load_queue(*budgets, queue);
+            return res;
         }
 
         aux = aux->next;
@@ -78,7 +81,7 @@ DETAIL* find_detail_by_position(NODE *start, int position){
     // Empty list
     if(start == NULL) return NULL;
 
-    if(length(start) - 1 < position) return NULL;
+    if(length(start) - 1 < position || position < index) return NULL;
 
     aux = start;
     while(aux != NULL){
@@ -94,6 +97,24 @@ DETAIL* find_detail_by_position(NODE *start, int position){
     return NULL;
 }
 
+int calculate_budget_total(BUDGET *budget){
+    NODE *aux = NULL;
+    DETAIL *temp;
+
+    budget->total = 0;
+
+    aux = budget->details;
+    while(aux != NULL){
+        temp = (DETAIL*) aux->data;
+
+        budget->total += temp->quantity * temp->price;
+
+        aux = aux->next;
+    }
+
+    return 0;
+}
+
 int remove_detail_by_position(NODE **start, int position){
     NODE *aux = NULL;
     BUDGET *data = NULL;
@@ -102,7 +123,7 @@ int remove_detail_by_position(NODE **start, int position){
     // Empty list
     if(*start == NULL) return -2;
 
-    if(length(start) - 1 < position) return -1;
+    if(length(*start) - 1 < position) return -1;
 
     aux = *start;
     while(aux != NULL){
@@ -157,7 +178,7 @@ int save_budgets(NODE *start){
     return 0;
 }
 
-int load_budgets(NODE **budgets, NODE **queue){
+int load_budgets(NODE **budgets){
     int res, i;
 
     FILE *fp = fopen(budgets_filename,"rb");
@@ -179,8 +200,6 @@ int load_budgets(NODE **budgets, NODE **queue){
 
         add_budget(budgets, budget_data);
 
-        if(budget_data->state == pending) add_budget(queue, budget_data);
-
         for(i = 0; i < budget_data->detailsSize; i++){
 
             // Allocates memory for the data
@@ -201,9 +220,30 @@ int load_budgets(NODE **budgets, NODE **queue){
     return 0;
 }
 
+int load_queue(NODE *budgets, NODE **queue){
+    NODE *aux = NULL;
+    BUDGET *temp = NULL;
+
+    if(budgets == NULL) return -1;
+
+    *queue = NULL;
+
+    aux = budgets;
+    while(aux != NULL){
+        temp = (BUDGET*) aux->data;
+
+        if(temp->state == pending) push(queue, temp, sizeof(BUDGET));
+
+        aux = aux->next;
+    }
+
+    return 0;
+}
+
 void print_budget(BUDGET *budget){
     NODE *aux = NULL;
     DETAIL *detail = NULL;
+    int counter = 0;
 
     printf("------- BUDGET -------\n");
     printf(" |- ID: %i\n", budget->id);
@@ -232,11 +272,12 @@ void print_budget(BUDGET *budget){
         while(aux != NULL){
             detail = (DETAIL*) aux->data;
 
-            printf("  |- Item:\n");
+            printf("  |- Item %i:\n", counter);
             printf("     |- Description: %s\n", detail->description);
             printf("     |- Quantity: %d\n", detail->quantity);
             printf("     |- Unitary price: %.2f$\n", detail->price);
 
+            counter++;
             aux = aux->next;
         }
     }

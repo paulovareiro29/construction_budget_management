@@ -89,7 +89,7 @@ int admin_menu(USER auth, NODE **users, NODE **budgets, NODE **queue) {
         printf("----------------------------------------\n");
 
         printf("[ 1 ] Create new user\n");
-        printf("[ 2 ] Add budget\n");
+        printf("[ 2 ] Budgets CRUD\n");
         printf("[ 3 ] Listing options\n");
         printf("[ 4 ] User ranking\n");
         printf("[ 5 ] Save finished budgets to text file\n");
@@ -106,8 +106,7 @@ int admin_menu(USER auth, NODE **users, NODE **budgets, NODE **queue) {
                 any_key();
                 break;
             case 2:
-                create_budget(budgets, queue);
-                any_key();
+                budget_crud_menu(budgets, queue);
                 break;
             case 3:
                 budget_listing_menu(budgets, queue);
@@ -131,6 +130,7 @@ int admin_menu(USER auth, NODE **users, NODE **budgets, NODE **queue) {
         }
 
     } while (opc != 0);
+    return 0;
 }
 
 int user_menu(USER auth, NODE **budgets, NODE **queue){
@@ -161,6 +161,7 @@ int user_menu(USER auth, NODE **budgets, NODE **queue){
         }
 
     } while (opc != 0);
+    return 0;
 }
 
 int budget_listing_menu(NODE **budgets, NODE **queue){
@@ -213,6 +214,49 @@ int budget_listing_menu(NODE **budgets, NODE **queue){
                 printf("Enter the username:");
                 scanf("%s", string);
                 list_finished_budgets_by_user(*budgets, string);
+                any_key();
+                break;
+            default:
+                break;
+        }
+
+    } while (opc != 0);
+    return 0;
+}
+
+int budget_crud_menu(NODE **budgets, NODE **queue){
+    int opc;
+
+    do {
+        clear_menu();
+        printf("-----------------------------\n");
+        printf("      BUDGET CRUD MENU       \n");
+        printf("-----------------------------\n");
+
+        printf("[ 1 ] Create new budget\n");
+        printf("[ 2 ] Read budget by ID\n");
+        printf("[ 3 ] Update budget by ID\n");
+        printf("[ 4 ] Delete budget by ID\n");
+        printf("[ 0 ] Exit\n\n");
+        printf("Option:");
+        scanf("%i", &opc);
+        fflush(stdin);
+
+        clear_menu();
+        switch (opc) {
+            case 1:
+                create_budget(budgets, queue);
+                any_key();
+                break;
+            case 2:
+                read_budget_by_id(budgets);
+                any_key();
+                break;
+            case 3:
+                update_budget_by_id(budgets, queue);
+                break;
+            case 4:
+                crud_remove_budget_by_id(budgets, queue);
                 any_key();
                 break;
             default:
@@ -323,12 +367,7 @@ int create_budget(NODE **budgets, NODE **queue) {
         if(res != 0)
             return res;
 
-        aux = last_node(budget->details);
-
-        if(aux == NULL) break;
-
-        detail = (DETAIL*) aux->data;
-        budget->total += detail->price * detail->quantity;
+        calculate_budget_total(budget);
 
         do {
             printf(" | Want to add more details? (1) - yes | (0) - no\n");
@@ -339,7 +378,7 @@ int create_budget(NODE **budgets, NODE **queue) {
     }
 
     res = add_budget(budgets, budget);
-    add_budget(queue, budget);
+    push(queue, budget, sizeof (BUDGET));
 
     if (res != 0) {
         free(budget);
@@ -386,6 +425,267 @@ int create_detail(NODE **details){
     }
 
     return 0;
+}
+
+void read_budget_by_id(NODE **budgets){
+    int opc, res = 0;
+    BUDGET *budget = NULL;
+
+    if(length(*budgets) == 0){
+        printf("Budgets list is empty!");
+        return;
+    }
+
+    do{
+        opc = 0;
+        printf("Budget ID:");
+        scanf("%i",&res);
+        fflush(stdin);
+
+        budget = find_budget_by_id(*budgets,res);
+
+        if(budget == NULL){
+            do{
+                printf("Budget not found!\n");
+                printf("Would you like to try again? (1) - yes | (0) - no\n");
+                printf("Option: ");
+                scanf("%i",&opc);
+                fflush(stdin);
+            }while(opc < 0 || opc > 1);
+        }else{
+            print_budget(budget);
+        }
+    }while(opc != 0);
+
+
+}
+
+void crud_remove_budget_by_id(NODE **budgets, NODE **queue){
+    int opc, res = 0;
+
+    BUDGET *budget = NULL;
+
+    if(length(*budgets) == 0){
+        printf("Budgets list is empty!");
+        return;
+    }
+
+    do{
+        opc = 0;
+        printf("Budget ID:");
+        scanf("%i",&res);
+        fflush(stdin);
+
+        budget = find_budget_by_id(*budgets,res);
+
+        if(budget == NULL){
+            do{
+                printf("Budget not found!\n");
+                printf("Would you like to try again? (1) - yes | (0) - no\n");
+                printf("Option: ");
+                scanf("%i",&opc);
+                fflush(stdin);
+            }while(opc < 0 || opc > 1);
+        }else{
+            opc = remove_budget_by_id(budgets, queue, res);
+            if(opc == 0){
+                save_budgets(*budgets);
+                printf("Budget removed successfully!\n");
+            }
+        }
+    }while(opc != 0);
+}
+
+void update_budget_by_id(NODE **budgets, NODE **queue){
+    int opc, res = 0, selected = 0, validState;
+    BUDGET *budget = NULL;
+
+    if(length(*budgets) == 0){
+        printf("Budgets list is empty!");
+        any_key();
+        return;
+    }
+
+    do{
+        opc = 0;
+        printf("Budget ID:");
+        scanf("%i",&res);
+        fflush(stdin);
+
+        budget = find_budget_by_id(*budgets,res);
+
+        if(budget == NULL){
+            do{
+                printf("Budget not found!\n");
+                printf("Would you like to try again? (1) - yes | (0) - no\n");
+                printf("Option: ");
+                scanf("%i",&opc);
+                fflush(stdin);
+            }while(opc < 0 || opc > 1);
+        }else{
+            do {
+                clear_menu();
+                print_budget(budget);
+                printf("\nWhich field would you like to update?\n");
+                printf("[ 1 ] Supplier\n");
+                printf("[ 2 ] Description\n");
+                printf("[ 3 ] State\n");
+                printf("[ 4 ] Details\n");
+                printf("[ 0 ] Exit\n");
+                printf("Option:");
+                scanf("%i", &selected);
+                fflush(stdin);
+
+                switch(selected){
+                    case 1:
+                        printf("\nNew supplier:");
+                        gets(budget->supplier);
+                        fflush(stdin);
+                        save_budgets(*budgets);
+                        break;
+                    case 2:
+                        printf("\nNew description:");
+                        gets(budget->description);
+                        fflush(stdin);
+                        save_budgets(*budgets);
+                        break;
+                    case 3:
+                        do{
+                            validState = 0;
+                            printf("\nNew State: (0) - pending");
+
+                            if(strlen(budget->user) != 0 && budget->state != finished)
+                                printf(" | (2) - finished");
+                            printf("\nOption:");
+
+                            scanf("%i", &budget->state);
+                            fflush(stdin);
+
+                            if(budget->state == finished && strlen(budget->user) == 0)
+                                validState = -1;
+
+                        }while(budget->state < 0 || budget->state > 2 || budget->state == 1 || validState != 0);
+                        if(budget->state == pending) load_queue(*budgets,queue);
+                        save_budgets(*budgets);
+                        break;
+                    case 4:
+                        budget_details_menu(budgets,budget);
+                        break;
+                }
+
+            }while(selected != 0);
+        }
+    }while(opc != 0);
+}
+
+void budget_details_menu(NODE **budgets, BUDGET *budget){
+    int opc = 0, selected = 0, res ;
+    DETAIL *detail;
+
+    if(budget == NULL) return;
+
+    do{
+        opc = 0;
+        clear_menu();
+        printf("BUDGET DETAILS MENU\n");
+        printf("[ 1 ] Add new detail\n");
+        printf("[ 2 ] Update detail by number\n");
+        printf("[ 3 ] Remove detail by number\n");
+        printf("[ 0 ] Exit\n");
+        printf("Option:");
+        scanf("%i", &opc);
+        fflush(stdin);
+
+        switch(opc){
+            case 1:
+                create_detail(&budget->details);
+                calculate_budget_total(budget);
+                save_budgets(*budgets);
+                any_key();
+                break;
+            case 2:
+                if(length(budget->details) == 0) {
+                    printf("Budget details list is empty!");
+                    any_key();
+                    break;
+                }
+
+                print_budget(budget);
+                printf("\nUPDATE DETAIL\n");
+                printf("Detail number:");
+                scanf("%i", &selected);
+
+                detail = find_detail_by_position(budget->details, selected);
+
+                if(detail == NULL){
+                    printf("Detail not found!\n");
+                    any_key();
+                }else{
+                    do{
+                        clear_menu();
+                        printf("DETAIL NR%i\n", selected);
+                        printf(" |- Description: %s\n", detail->description);
+                        printf(" |- Quantity: %i\n", detail->quantity);
+                        printf(" |- Price: %.2f\n\n", detail->price);
+
+                        printf("What would you like to update?\n");
+                        printf("[ 1 ] Description\n");
+                        printf("[ 2 ] Quantity\n");
+                        printf("[ 3 ] Price\n");
+                        printf("[ 0 ] Exit\n");
+                        scanf("%i", &opc);
+                        fflush(stdin);
+
+                        switch(opc){
+                            case 1:
+                                printf("New description:");
+                                gets(detail->description);
+                                save_budgets(*budgets);
+                                break;
+                            case 2:
+                                printf("New quantity:");
+                                scanf("%i", &detail->quantity);
+                                calculate_budget_total(budget);
+                                save_budgets(*budgets);
+                                break;
+                            case 3:
+                                printf("New price:");
+                                scanf("%f", &detail->price);
+                                calculate_budget_total(budget);
+                                save_budgets(*budgets);
+                                break;
+                        }
+                    }while(opc != 0);
+                    opc = 1;
+                }
+
+
+                break;
+            case 3:
+                if(length(budget->details) == 0) {
+                    printf("Budget details list is empty!");
+                    any_key();
+                    break;
+                }
+
+                print_budget(budget);
+                printf("\nREMOVE DETAIL\n");
+                printf("Detail number:");
+                scanf("%i", &selected);
+
+                res = remove_detail_by_position(&budget->details, selected);
+
+                if(res == 0){
+                    printf("Detail removed successfully!");
+                }else{
+                    printf("Failed to remove detail!");
+                }
+
+                any_key();
+                break;
+        }
+
+    }while(opc != 0);
 }
 
 void list_pending_budgets(NODE *queue){
