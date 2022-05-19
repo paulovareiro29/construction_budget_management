@@ -15,9 +15,16 @@ void clear_menu();
 void any_key();
 
 /*
- * Login menu
+ * Initial menu
  *  - return  0: Success
  *  - return -1: Exit program
+*/
+int initial_menu(NODE *users, USER **auth);
+
+/*
+ * Login menu
+ *  - return  0: Success
+ *  - return -1: Exit
 */
 int auth_menu(NODE *users, USER **auth);
 

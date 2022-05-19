@@ -204,37 +204,37 @@ void print_budget(BUDGET *budget){
     NODE *aux = NULL;
     DETAIL *detail = NULL;
 
-    printf("BUDGET INFO\n");
-    printf("\t- ID: %i\n", budget->id);
-    printf("\t- Supplier: %s\n", budget->supplier);
-    printf("\t- Description: %s\n", budget->description);
-    printf("\t- Total: %.2f$\n", budget->total);
+    printf("------- BUDGET -------\n");
+    printf(" |- ID: %i\n", budget->id);
+    printf(" |- Supplier: %s\n", budget->supplier);
+    printf(" |- Description: %s\n", budget->description);
+    printf(" |- Total: %.2f$\n", budget->total);
 
     switch (budget->state) {
         case 0:
-            printf("\t- State: Pending\n");
+            printf(" |- State: Pending\n");
             break;
         case 1:
-            printf("\t- State: Analysing\n");
+            printf(" |- State: Analysing\n");
             break;
         case 2:
-            printf("\t- State: Finished\n");
+            printf(" |- State: Finished\n");
             break;
     }
 
     aux = budget->details;
 
     if(aux == NULL){
-        printf("\t- Details list empty!\n");
+        printf(" |- Details list empty!\n");
     }else{
-        printf("\t- Details list:\n");
+        printf(" |- Details list:\n");
         while(aux != NULL){
             detail = (DETAIL*) aux->data;
 
-            printf("\t\t- Item:\n");
-            printf("\t\t  - Description: %s\n", detail->description);
-            printf("\t\t  - Quantity: %d\n", detail->quantity);
-            printf("\t\t  - Unitary price: %.2f$\n", detail->price);
+            printf("  |- Item:\n");
+            printf("     |- Description: %s\n", detail->description);
+            printf("     |- Quantity: %d\n", detail->quantity);
+            printf("     |- Unitary price: %.2f$\n", detail->price);
 
             aux = aux->next;
         }
@@ -246,14 +246,14 @@ void print_budget(BUDGET *budget){
         case -1:
             break;
         case 0:
-            printf("\t- Result: Denied\n");
+            printf(" |- Result: Denied\n");
             break;
         case 1:
-            printf("\t- Result: Approved\n");
+            printf(" |- Result: Approved\n");
             break;
     }
 
-    printf("\t- Date: %s\n", asctime(gmtime(&budget->date)));
-    printf("\t- Justification: %s\n", budget->justification);
-    printf("\t- User that analysed: %s\n", budget->user);
+    printf(" |- Date: %s\n", asctime(gmtime(&budget->date)));
+    printf(" |- Justification: %s\n", budget->justification);
+    printf(" |- User that analysed: %s\n", budget->user);
 }

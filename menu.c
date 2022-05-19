@@ -15,19 +15,44 @@ void any_key() {
     getch();
 }
 
+int initial_menu(NODE *users, USER **auth){
+    int opc = 1;
+
+    do {
+        clear_menu();
+        printf("-------------------\n");
+        printf("      WELCOME      \n");
+        printf("-------------------\n");
+        printf("[ 1 ] Authenticate\n");
+        printf("[ 0 ] Exit\n\n");
+        printf("Option:");
+        scanf("%d", &opc);
+        fflush(stdin);
+
+        clear_menu();
+
+        if(opc == 1 && auth_menu(users, auth) == 0) return 0;
+
+    }while(opc != 0);
+
+    return -1;
+}
+
 int auth_menu(NODE *users, USER **auth) {
     char username[MAX], password[MAX];
     int opc = 1;
 
     clear_menu();
     do {
-        printf("Please authenticate before continuing\n");
+        printf("--------------------------\n");
+        printf("      AUTHENTICATION      \n");
+        printf("--------------------------\n");
 
-        printf(" - Username:");
+        printf("     | Username:");
         scanf("%s", username);
         fflush(stdin);
 
-        printf(" - Password:");
+        printf("     | Password:");
         scanf("%s", password);
         fflush(stdin);
 
@@ -40,7 +65,10 @@ int auth_menu(NODE *users, USER **auth) {
 
         if (*auth == NULL) {
             do {
-                printf("Wrong account credentials!\n [1] Try again!\n [0] Exit\nOption:");
+                printf("--------------------------\n");
+                printf("      AUTHENTICATION      \n");
+                printf("--------------------------\n");
+                printf("[1] Try again!\n[0] Exit\n\nOption:");
                 scanf("%i", &opc);
                 fflush(stdin);
                 clear_menu();
@@ -56,14 +84,18 @@ int admin_menu(USER auth, NODE **users, NODE **budgets, NODE **queue) {
 
     do {
         clear_menu();
-        printf("MENU\n");
+        printf("----------------------------------------\n");
+        printf("               ADMIN MENU               \n");
+        printf("----------------------------------------\n");
+
         printf("[ 1 ] Create new user\n");
         printf("[ 2 ] Add budget\n");
         printf("[ 3 ] Listing options\n");
         printf("[ 4 ] User ranking\n");
         printf("[ 5 ] Save finished budgets to text file\n");
         printf("[ 9 ] Sign out\n");
-        printf("[ 0 ] Exit\nOption:");
+        printf("[ 0 ] Exit\n\n");
+        printf("Option:");
         scanf("%i", &opc);
         fflush(stdin);
 
@@ -106,10 +138,13 @@ int user_menu(USER auth, NODE **budgets, NODE **queue){
 
     do {
         clear_menu();
-        printf("MENU\n");
+        printf("----------------------\n");
+        printf("       USER MENU      \n");
+        printf("----------------------\n");
         printf("[ 1 ] Analyse budget\n");
         printf("[ 9 ] Sign out\n");
-        printf("[ 0 ] Exit\nOption:");
+        printf("[ 0 ] Exit\n\n");
+        printf("Option:");
         scanf("%i", &opc);
         fflush(stdin);
         clear_menu();
@@ -135,14 +170,17 @@ int budget_listing_menu(NODE **budgets, NODE **queue){
 
     do {
         clear_menu();
-        printf("BUDGET LISTING MENU\n");
+        printf("-----------------------------------------------\n");
+        printf("               BUDGET LISTING MENU             \n");
+        printf("-----------------------------------------------\n");
         printf("[ 1 ] List all pending budgets\n");
         printf("[ 2 ] List all finished budgets\n");
         printf("[ 3 ] List all approved budgets\n");
         printf("[ 4 ] List all budgets above given amount\n");
         printf("[ 5 ] List all budgets by supplier\n");
         printf("[ 6 ] List all finished budgets by certain user\n");
-        printf("[ 0 ] Exit\nOption:");
+        printf("[ 0 ] Exit\n\n");
+        printf("Option:");
         scanf("%i", &opc);
         clear_menu();
 
@@ -195,23 +233,24 @@ int create_user(NODE **users) {
 
     do {
         clear_menu();
-        printf("NEW USER\n");
+        printf("----------------------\n");
+        printf("       NEW USER       \n");
+        printf("----------------------\n");
 
-        printf(" - Username:");
+        printf(" | Username:");
         scanf("%s", user->username);
         fflush(stdin);
 
-        printf(" - Name:");
+        printf(" | Name:");
         scanf("%s", user->name);
         fflush(stdin);
 
-        printf(" - Password:");
+        printf(" | Password:");
         scanf("%s", user->password);
         fflush(stdin);
 
-        printf(" - Role:\n");
-        printf("   [ 0 ] user\n");
-        printf("   [ 1 ] admin\nOption:");
+        printf(" | Role: (0) - user | (1) - admin\n");
+        printf("   Option:");
         scanf("%i", &user->role);
         fflush(stdin);
 
@@ -225,9 +264,12 @@ int create_user(NODE **users) {
             case -1:
                 do {
                     clear_menu();
-                    printf("Username already exists!\n");
+                    printf("-------------------------------------\n");
+                    printf("       USERNAME ALREADY EXISTS       \n");
+                    printf("-------------------------------------\n");
                     printf("[ 1 ] Try again!\n");
-                    printf("[ 0 ] Exit\nOption:");
+                    printf("[ 0 ] Exit\n\n");
+                    printf("Option:");
                     scanf("%i", &opc);
                 } while (opc < 0 || opc > 1);
                 break;
@@ -252,18 +294,21 @@ int create_budget(NODE **budgets, NODE **queue) {
     budget->state = pending;
     budget->details = NULL;
 
-    printf("\nNEW BUDGET\n");
+    printf("------------------------\n");
+    printf("       NEW BUDGET       \n");
+    printf("------------------------\n");
 
-    printf(" - Supplier:");
+    printf(" | Supplier:");
     scanf("%s", budget->supplier);
     fflush(stdin);
 
-    printf(" - Description:");
+    printf(" | Description:");
     scanf("%s", budget->description);
     fflush(stdin);
 
     do {
-        printf(" - Want to add details?\n   [1] Yes\n   [0] No\nOption:");
+        printf(" | Want to add details? (1) - yes | (0) - no\n");
+        printf("   Option:");
         scanf("%i", &opc);
         fflush(stdin);
     } while (opc < 0 || opc > 1);
@@ -273,17 +318,18 @@ int create_budget(NODE **budgets, NODE **queue) {
 
         if (detail == NULL) return -3;
 
-        printf(" - New detail nr%i\n", length(budget->details));
-
-        printf("   - Detail description:");
+        printf("-----------------------------\n");
+        printf("       NEW DETAIL NR%i       \n", length(budget->details));
+        printf("-----------------------------\n");
+        printf("   | Detail description:");
         scanf("%s", detail->description);
         fflush(stdin);
 
-        printf("   - Quantity:");
+        printf("   | Quantity:");
         scanf("%d", &detail->quantity);
         fflush(stdin);
 
-        printf("   - Unitary Price:");
+        printf("   | Unitary Price:");
         scanf("%f", &detail->price);
         fflush(stdin);
 
@@ -297,7 +343,8 @@ int create_budget(NODE **budgets, NODE **queue) {
         }
 
         do {
-            printf("Want to add more details?\n[ 1 ] Yes\n[ 0 ] No\nOption:");
+            printf(" | Want to add more details? (1) - yes | (0) - no\n");
+            printf("   Option:");
             scanf("%i", &opc);
             fflush(stdin);
         } while (opc < 0 || opc > 1);
@@ -330,7 +377,7 @@ void list_pending_budgets(NODE *queue){
         budget_data = (BUDGET*) aux->data;
 
         print_budget(budget_data);
-
+        printf("\n");
         aux = aux->next;
     }
 }
@@ -347,6 +394,7 @@ void list_finished_budgets(NODE *budgets){
 
         if(budget_data->state == finished){
             print_budget(budget_data);
+            printf("\n");
             count++;
         }
 
@@ -368,6 +416,7 @@ void list_approved_budgets(NODE *budgets){
 
         if(budget_data->state == finished && budget_data->result == approved){
             print_budget(budget_data);
+            printf("\n");
             count++;
         }
 
@@ -389,6 +438,7 @@ void list_budgets_above_amount(NODE *budgets, float amount){
 
         if(budget_data->total > amount){
             print_budget(budget_data);
+            printf("\n");
             count++;
         }
 
@@ -410,6 +460,7 @@ void list_budgets_by_supplier(NODE *budgets, char supplier[MAX]){
 
         if(strcmp(budget_data->supplier, supplier) == 0){
             print_budget(budget_data);
+            printf("\n");
             count++;
         }
 
@@ -485,7 +536,9 @@ void list_user_ranking(NODE *users, NODE *budgets){
         ranking[j + 1] = temp;
     }
 
-    printf("\nUSER RANKING\n", size);
+    printf("--------------------------\n");
+    printf("       USER RANKING       \n");
+    printf("--------------------------\n");
     for(i = 0; i < pos; i++){
         printf("%i: %i - %s\n", i + 1, ranking[i].score, ranking[i].username);
     }
@@ -553,9 +606,12 @@ void list_finished_budgets_by_user(NODE *budgets, char username[MAX]){
     }
 
 
-    printf("\nBUDGETS\n", size);
+    printf("--------------------------\n");
+    printf("          BUDGETS         \n");
+    printf("--------------------------\n");
     for(i = 0; i < pos; i++){
         print_budget(&list[i]);
+        printf("\n");
     }
 
     free(list);
@@ -617,37 +673,37 @@ int save_finished_budgets(NODE *budgets){
     for(i = 0; i < pos; i++){
         temp = list[i];
 
-        fprintf(fp,"BUDGET INFO\n");
-        fprintf(fp,"\t- ID: %i\n", temp.id);
-        fprintf(fp,"\t- Supplier: %s\n", temp.supplier);
-        fprintf(fp,"\t- Description: %s\n", temp.description);
-        fprintf(fp,"\t- Total: %.2f$\n", temp.total);
+        fprintf(fp,"------- BUDGET -------\n");
+        fprintf(fp," |- ID: %i\n", temp.id);
+        fprintf(fp," |- Supplier: %s\n", temp.supplier);
+        fprintf(fp," |- Description: %s\n", temp.description);
+        fprintf(fp," | Total: %.2f$\n", temp.total);
 
         switch (temp.state) {
             case 0:
-                fprintf(fp,"\t- State: Pending\n");
+                fprintf(fp," |- State: Pending\n");
                 break;
             case 1:
-                fprintf(fp,"\t- State: Analysing\n");
+                fprintf(fp," |- State: Analysing\n");
                 break;
             case 2:
-                fprintf(fp,"\t- State: Finished\n");
+                fprintf(fp," |- State: Finished\n");
                 break;
         }
 
         aux = temp.details;
 
         if(aux == NULL){
-            fprintf(fp,"\t- Details list empty!\n");
+            fprintf(fp," |- Details list empty!\n");
         }else{
-            fprintf(fp,"\t- Details list:\n");
+            fprintf(fp," |- Details list:\n");
             while(aux != NULL){
                 detail = (DETAIL*) aux->data;
 
-                fprintf(fp,"\t\t- Item:\n");
-                fprintf(fp,"\t\t  - Description: %s\n", detail->description);
-                fprintf(fp,"\t\t  - Quantity: %d\n", detail->quantity);
-                fprintf(fp,"\t\t  - Unitary price: %.2f$\n", detail->price);
+                fprintf(fp,"  |- Item:\n");
+                fprintf(fp,"     |- Description: %s\n", detail->description);
+                fprintf(fp,"     |- Quantity: %d\n", detail->quantity);
+                fprintf(fp,"     |- Unitary price: %.2f$\n", detail->price);
 
                 aux = aux->next;
             }
@@ -657,16 +713,16 @@ int save_finished_budgets(NODE *budgets){
             case -1:
                 break;
             case 0:
-                fprintf(fp,"\t- Result: Denied\n");
+                fprintf(fp," |- Result: Denied\n");
                 break;
             case 1:
-                fprintf(fp,"\t- Result: Approved\n");
+                fprintf(fp," |- Result: Approved\n");
                 break;
         }
 
-        fprintf(fp,"\t- Date: %s\n", asctime(gmtime(&temp.date)));
-        fprintf(fp,"\t- Justification: %s\n", temp.justification);
-        fprintf(fp,"\t- User that analysed: %s\n", temp.user);
+        fprintf(fp," |- Date: %s\n", asctime(gmtime(&temp.date)));
+        fprintf(fp," |- Justification: %s\n", temp.justification);
+        fprintf(fp," |- User that analysed: %s\n", temp.user);
         fprintf(fp,"\n\n");
     }
 
@@ -696,12 +752,13 @@ void analyse_budget(USER auth,NODE **budgets, NODE **queue){
     budget->state = analysing;
 
     do{
-        printf("FINAL RESULT\n[1] Approved\n[0] Denied\nOption:");
+        printf(" | Final result: (1) approved | (0) denied\n");
+        printf("   Option:");
         scanf("%i", &result);
         fflush(stdin);
     }while(result < 0 || result > 1);
 
-    printf("Justification:");
+    printf(" | Justification:");
     gets(justification);
     fflush(stdin);
 

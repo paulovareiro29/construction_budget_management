@@ -41,7 +41,7 @@ int main() {
          * Enters the auth menu aka login menu.
          * returning -1 means that the user wants to exit the program.
          */
-        if (auth_menu(users, &auth) == -1) return 0;
+        if (initial_menu(users, &auth) == -1) return 0;
 
         if(auth->role == admin){
             res = admin_menu(*auth, &users, &budgets, &queue);
