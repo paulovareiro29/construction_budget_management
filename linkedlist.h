@@ -65,6 +65,11 @@ void clear(NODE **start);
 int isEmpty(NODE **start);
 
 /*
+ * Returns the last element of the linked list or NULL
+*/
+NODE* last_node(NODE *start);
+
+/*
  * Appends data to file given the filename
  *  - return  0: Success
  *  - return -3: Error opening file

@@ -61,6 +61,7 @@ int remove_budget_by_id(NODE **start, int id);
 /*
  * Adds a new detail
  *  - return  0: Success
+ *  - return -1: Maximum details reached
  *  - return -3: Out of memory
 */
 int add_detail(NODE **start, DETAIL *detail);

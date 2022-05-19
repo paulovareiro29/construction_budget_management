@@ -63,6 +63,15 @@ int create_user(NODE **users);
 int create_budget(NODE **budgets, NODE **queue);
 
 /*
+ * Prompts the user for new detail info
+ *  - return  0: Success
+ *  - return -1: Failed to create detail
+ *  - return -2: Maximum details reached
+ *  - return -3: Out of memory
+*/
+int create_detail(NODE **details);
+
+/*
  * Lists all information about the pending budgets
 */
 void list_pending_budgets(NODE *queue);

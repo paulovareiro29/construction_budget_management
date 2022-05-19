@@ -285,7 +285,8 @@ int create_user(NODE **users) {
 
 int create_budget(NODE **budgets, NODE **queue) {
     int opc, res;
-
+    NODE *aux = NULL;
+    DETAIL *detail = NULL;
     BUDGET *budget = (BUDGET *) malloc(sizeof(BUDGET));
 
     if (budget == NULL) return -3;
@@ -314,33 +315,20 @@ int create_budget(NODE **budgets, NODE **queue) {
     } while (opc < 0 || opc > 1);
 
     while (opc != 0) {
-        DETAIL *detail = (DETAIL *) malloc(sizeof(DETAIL));
 
-        if (detail == NULL) return -3;
+        res = create_detail(&budget->details);
 
-        printf("-----------------------------\n");
-        printf("       NEW DETAIL NR%i       \n", length(budget->details));
-        printf("-----------------------------\n");
-        printf("   | Detail description:");
-        scanf("%s", detail->description);
-        fflush(stdin);
+        if(res == -2) break;
 
-        printf("   | Quantity:");
-        scanf("%d", &detail->quantity);
-        fflush(stdin);
-
-        printf("   | Unitary Price:");
-        scanf("%f", &detail->price);
-        fflush(stdin);
-
-        budget->total += detail->price * detail->quantity;
-
-        res = add_detail(&budget->details, detail);
-
-        if (res != 0) {
-            free(detail);
+        if(res != 0)
             return res;
-        }
+
+        aux = last_node(budget->details);
+
+        if(aux == NULL) break;
+
+        detail = (DETAIL*) aux->data;
+        budget->total += detail->price * detail->quantity;
 
         do {
             printf(" | Want to add more details? (1) - yes | (0) - no\n");
@@ -360,6 +348,43 @@ int create_budget(NODE **budgets, NODE **queue) {
 
     save_budgets(*budgets);
     printf("Budget created successfully!");
+    return 0;
+}
+
+int create_detail(NODE **details){
+    int res = 0;
+
+    if(length(*details) >= 20) {
+        printf("Maximum details reached!\n");
+        return -2;
+    }
+
+    DETAIL *detail = (DETAIL *) malloc(sizeof(DETAIL));
+
+    if (detail == NULL) return -3;
+
+    printf("-----------------------------\n");
+    printf("       NEW DETAIL NR%i       \n", length(*details));
+    printf("-----------------------------\n");
+    printf("   | Detail description:");
+    scanf("%s", detail->description);
+    fflush(stdin);
+
+    printf("   | Quantity:");
+    scanf("%d", &detail->quantity);
+    fflush(stdin);
+
+    printf("   | Unitary Price:");
+    scanf("%f", &detail->price);
+    fflush(stdin);
+
+    res = add_detail(details, detail);
+
+    if (res != 0) {
+        free(detail);
+        return res;
+    }
+
     return 0;
 }
 

@@ -66,6 +66,7 @@ int remove_budget_by_id(NODE **start, int id){
 }
 
 int add_detail(NODE **start, DETAIL *detail){
+    if(length(*start) >= 20) return -1;
     return push(start,detail, sizeof (DETAIL));
 }
 

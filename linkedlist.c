@@ -162,6 +162,18 @@ int isEmpty(NODE **start){
     return *start == NULL;
 }
 
+NODE* last_node(NODE *start){
+    NODE *aux = start;
+
+    if(aux == NULL) return NULL;
+
+    while(aux->next != NULL){
+        aux = aux->next;
+    }
+
+    return aux;
+}
+
 int appendToFile(char filename[MAX], void* data, size_t size){
     int res;
 
